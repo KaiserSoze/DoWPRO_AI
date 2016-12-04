@@ -1,0 +1,125 @@
+----------------------------------------
+-- File: 'SistersAdeptusArbitesMeleeTactic.ai'
+-- Edited by Arkhan @ 02.07.2011
+
+class 'SistersAdeptusArbitesMeleeTactic' (SistersInfantryTactic)
+
+ArbitesMelee = {}
+
+function SistersAdeptusArbitesMeleeTactic:__init( squad_ai ) super( squad_ai )
+
+	self:SetName("Sisters Adeptus Arbites Melee Tactic")
+	
+	-- Force melee stance (Commander detaching can cause false stances)
+	self.iForceMeleeStance = true
+end
+
+function SistersAdeptusArbitesMeleeTactic:InitAbilities()
+
+	-- Init ability ID's
+	if (ArbitesMelee.entrench == nil) then
+		ArbitesMelee.entrench = cpu_manager.stats:GetAbilityID( "sisters_arbites_entrench" )
+	end
+end
+
+function SistersAdeptusArbitesMeleeTactic:ToggleEntrench( state )
+
+	-- Check if the unit can entrench
+	if (not self.squad_ai:CanDoAbility(ArbitesMelee.entrench)) then
+		return
+	end
+	
+	-- Check if it's already in desired state
+	if (self.squad_ai:IsUsingAbility(ArbitesMelee.entrench) == state) then
+		return 
+	end
+	
+	-- Entrenchificationism
+	self.squad_ai:DoSpecialAbility(ArbitesMelee.entrench)
+end
+
+
+function SistersAdeptusArbitesMeleeTactic:DoAbilities()
+
+	-- Try to entrench
+	local bInMelee = cpu_manager:IsInMelee( self.squad_ai ) and self.squad_ai:IsUnderAttack()
+	local bHealthy = not self.squad_ai:IsBroken() and self.squad_ai:GetHealthPercentage() > 0.5
+	local bAttackState = (self:GetState() == Tactic.States.Attack)
+
+	-- entrench if in melee, not broken and have more than 50% health
+	if ( bAttackState and bInMelee and bHealthy  ) then 
+		self:ToggleEntrench( true )
+	else 
+		self:ToggleEntrench( false )
+	end
+	
+	-- Compute common abilities
+	SistersInfantryTactic.DoAbilities(self)
+	
+function SistersAdeptusArbitesMeleeTactic:Reinforce()
+
+	-- Check if we are reinforcing
+	if (self.squad_ai:IsReinforcing()) then
+		return
+	end
+	
+	-- If I am broken, don't upgrade!
+	if (self:IsAffectedByMorale() and self.squad_ai:IsBroken()) then
+		return
+	end
+	
+	-- Don't reinforce squads in critical condition
+	if (self.squad_ai:GetNumTroopers() <= self.squad_ai:GetMaxTroopers() / 3 and self.squad_ai:IsUnderAttack()) then
+		return
+	end
+	
+	-- Always try for the actual leader first
+	if (not self.squad_ai:IsReinforcing()) then
+
+		-- try for different types of squad members
+		local AdeptusarbitesplasmaIndex = 1
+		local AdeptusarbitesshotgunIndex = 1
+		local AdeptusarbitesgrenadelauncherIndex = 1
+	
+		local numAdeptusarbitesplasma = self.squad_ai:GetLeaderCount( AdeptusarbitesplasmaIndex )
+		local numAdeptusarbitesshotgun = self.squad_ai:GetLeaderCount( AdeptusarbitesshotgunIndex )
+		local numAdeptusarbitesgrenadelauncher = self.squad_ai:GetLeaderCount( AdeptusarbitesgrenadelauncherIndex )
+
+		-- Desired number of each leader type
+		local desiredAdeptusarbitesplasma = math.random(0,2) 
+		local desiredAdeptusarbitesshotgun = math.random(0,2)
+		local desiredAdeptusarbitesgrenadelauncher = math.random(0,2)
+
+		-- Desired order of reinforcing
+		if (numAdeptusarbitesplasma < desiredAdeptusarbitesplasma) then
+		
+			if (self.squad_ai:CanReinforce( true, AdeptusarbitesplasmaIndex )) then
+				self.squad_ai:DoReinforce( true, AdeptusarbitesplasmaIndex )
+				return
+			end
+		elseif (numAdeptusarbitesshotgun < desiredAdeptusarbitesshotgun) then
+		
+			if (self.squad_ai:CanReinforce( true, AdeptusarbiteshotgunIndex )) then
+				self.squad_ai:DoReinforce( true, AdeptusarbitesshotgunIndex )
+				return
+			end
+		elseif (numAdeptusarbitesshotgun < desiredAdeptusarbitesgrenadelauncher) then
+		
+			if (self.squad_ai:CanReinforce( true, AdeptusarbitegrenadelauncherIndex )) then
+				self.squad_ai:DoReinforce( true, AdeptusarbitesgrenadelauncherIndex )
+				return
+			end
+		end
+	end
+	
+	-- Don't reinforce if we have no free resources
+	if ((not Tactic.Options.can_reinforce and g_iGMT > DefendChokePointPlan.HarassingTime * 60) or self.bWaitForThreat) then
+		return
+	end
+	
+	-- Always try to reinforce, as long as I have money
+	if (self.squad_ai:CanReinforce( false, 0 )) then
+		self.squad_ai:DoReinforce( false, 0 )
+	end
+end
+end

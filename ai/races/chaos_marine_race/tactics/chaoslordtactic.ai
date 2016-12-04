@@ -1,0 +1,107 @@
+----------------------------------------
+-- File: 'chaoslordtactic.ai'
+-- Edited by Thudmeizer @ 11.10.2005
+-- Edited by LarkinVB   @ 31.07.2005
+
+class 'ChaosLordTactic' (ChaosMarineInfantryTactic)
+
+ChaosLord = {}
+
+function ChaosLordTactic:__init( squad_ai ) super( squad_ai )
+
+	self:SetName("Chaos Lord Tactic")
+	
+	self.dance_time = 0
+end
+
+-- Assassinate win condition -- never attack
+function ChaosLordTactic:IsAttacker()
+	return (not cpu_manager.assassinate and self:IsCommanderAttacker())
+end
+
+-- Assassinate win condition -- never defend
+function ChaosLordTactic:IsDefender()
+	return (not cpu_manager.assassinate and self:IsCommanderDefender())
+end
+
+function ChaosLordTactic:InitAbilities()
+
+	-- Init ability ID's
+	if (ChaosLord.strength_id == nil) then
+		ChaosLord.strength_id = cpu_manager.stats:GetAbilityID( "chaos_daemon_strength" )	
+	end
+
+	if (ChaosLord.banner_id == nil) then
+		ChaosLord.banner_id = cpu_manager.stats:GetAbilityID( "chaos_desecrated_standard_healing_banner" )	
+	end
+end
+
+function ChaosLordTactic:DoAbilities()
+
+	Ability.DoAbility( self.squad_ai, ChaosLord.strength_id, Ability.Filters.IsAttacking )
+	
+	--healing banner
+	local iEnemyStrength, iAlliedStrength = cpu_manager:GetArmyStrengthAtPos(self.squad_ai:GetPosition(), 50)
+	local iRequisition = resource_manager:GetResourceAmount():Get( ResourceAmount.RT_Requisition )
+	local iPower = resource_manager:GetResourceAmount():Get( ResourceAmount.RT_Power )
+	if (Tactic.Options.can_reinforce and iRequisition > 200 and iPower > 100) then
+		if (self.squad_ai:CanDoAbility(ChaosLord.banner_id)) then
+			if (iEnemyStrength > 0.8 * iAlliedStrength) then
+				local range = self.squad_ai:GetAbilityRange(ChaosLord.banner_id)	
+				-- no banner on retreating, small squads or engineers
+				local squad_filter = function( squad_ai )		
+					return (squad_ai:GetNumTroopers() >= 6 and squad_ai:IsInCombat() and
+						not squad_ai:GetTactic():IsMoving() and not squad_ai:IsEngineer())
+				end	
+				local target_squad = cpu_manager:GetClosestSquad( self.squad_ai:GetPosition(), range, squad_filter )
+				if (target_squad ~= nil) then
+					self.squad_ai:DoSpecialAbilityPos( ChaosLord.banner_id , target_squad:GetPosition() )
+				end
+			end
+		end
+	end
+	
+	-- Try to possess and become Daemon Prince
+    if (self.squad_ai:IsInCombat() and self.squad_ai:CanPossess()) then
+        self.squad_ai:DoPossess()
+    end
+end
+
+function ChaosLordTactic:Update()
+
+	if (self:IsComplete()) then
+		return
+	end
+	
+	-- State machine
+	if (not InfantryTactic.Update( self )) then
+		return
+	end
+		
+	local bSetRanged = false
+    local bSetMelee = false
+	local eStance = self.squad_ai:GetMeleeStance()
+	-- Check health
+    if (self.squad_ai:GetHealthPercentage() > 0.4) then
+        bSetMelee = (eStance == SquadAI.MSTANCE_Ranged)
+	else
+        bSetRanged = (eStance == SquadAI.MSTANCE_Assault)
+    end
+	
+	if (bSetRanged) then
+        self.squad_ai:DoSetMeleeStance( SquadAI.MSTANCE_Ranged )
+        self.dance_time = g_iGMT
+    elseif (bSetMelee and self.stateID ~= Tactic.StateID.DoDance and g_iGMT > self.dance_time + 10) then
+        self.squad_ai:DoSetDefaultMeleeStance()
+        self.dance_time = 0
+    end
+		
+	-- Assassinate win condition -- never attach to a squad
+	if (not cpu_manager.assassinate and self.squad_ai:GetMeleeStance() == SquadAI.MSTANCE_Assault) then				
+		if (self.squad_ai:IsInCombat() or self.squad_ai:WasRecentlyHurt()) then
+			if (self:TryAttachSquad(false, true, 50, 150, self.m_fCommanderAttachHealth) == nil) then
+				self:TryAttachSquadMelee()
+			end
+		end
+	end
+end

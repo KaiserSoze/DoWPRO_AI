@@ -1,0 +1,69 @@
+----------------------------------------
+-- File: 'SistersBattleSistersTactic.ai'
+-- Edited by Arkhan @ 02.07.2011
+
+class 'SistersBattleSistersTactic' (SistersInfantryTactic)
+
+SistersBattleSisters = {}
+
+function SistersBattleSistersTactic:__init( squad_ai ) super( squad_ai )
+
+	self:SetName("Sisters Battle Sisters Tactic")
+	
+	-- Set upgrade type
+	self.bLongRange = (math.random(1, 2) == 1)
+end
+
+function SistersBattleSistersTactic:Upgrade()
+
+	-- Check if we are reinforcing
+	if (self.squad_ai:IsReinforcing() or not self.squad_ai:HasUpgradableTrooper()) then
+		return
+	end
+
+	-- If I am broken, don't upgrade!
+	if (self:IsAffectedByMorale() and self.squad_ai:IsBroken()) then
+		return
+	end	
+	
+	-- Only upgrade in healthy state
+	if (self.squad_ai:GetNumTroopers() < self.squad_ai:GetMaxTroopers() * 0.5 or self.squad_ai:GetHealthPercentage() < 0.5 or self.squad_ai:IsUnderAttack()) then
+		return
+	end
+		
+	-- Check upgrade type
+	if (self.bLongRange) then
+	
+		-- Upgrade to storm bolter
+		self.squad_ai:DoBestUpgrade(UnitStatsAI.UC_LightInfantryHigh)
+	else
+		-- Upgrade to flamer
+		self.squad_ai:DoBestUpgrade(UnitStatsAI.UC_MonsterMed)
+	end
+end
+
+function SistersBattleSistersTactic:InitAbilities()
+
+	-- Init ability ID's
+	if (SistersBattleSisters.iPhosphorGrenadeID == nil) then
+		SistersBattleSisters.iPhosphorGrenadeID = cpu_manager.stats:GetAbilityID( "sisters_phosphor_grenades" )
+	end
+	
+	if (SistersBattleSisters.retribution_id == nil) then
+		SistersBattleSisters.retribution_id = cpu_manager.stats:GetAbilityID( "sisters_act_of_faith_divine_retribution" )
+	end
+end
+
+function SistersBattleSistersTactic:DoAbilities()
+
+	-- Try to throw phosphor grenade
+	Ability.DoAbilityTarget( self.squad_ai, SistersBattleSisters.iPhosphorGrenadeID, Ability.Filters.CloseInfiltratedOrVisibleEnemyInfantry, 4 )
+	
+	-- Enemies take additional damage when they attack the attached squad 
+	if (self.squad_ai:IsUnderAttack() and self.squad_ai:CanDoAbility(SistersBattleSisters.retribution_id)) then
+		self.squad_ai:DoSpecialAbility(SistersBattleSisters.retribution_id) 
+	end
+
+	-- Compute common abilities
+	SistersInfantryTactic.DoAbilities(self)
+end

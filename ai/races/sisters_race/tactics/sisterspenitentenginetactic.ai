@@ -1,0 +1,32 @@
+----------------------------------------
+-- File: 'SistersPenitentEngineTactic.ai'
+-- Edited by Arkhan @ 02.07.2011
+
+class 'SistersPenitentEngineTactic' (SistersVehicleTactic)
+
+SistersPenitentEngine = {}
+
+function SistersPenitentEngineTactic:__init( squad_ai ) super( squad_ai )
+
+	self:SetName("Sisters Penitent Engine Tactic")
+end
+
+function SistersPenitentEngineTactic:InitAbilities()
+
+	-- Init ability ID's
+	if (SistersPenitentEngine.iHolyRageID == nil) then
+		SistersPenitentEngine.iHolyRageID = cpu_manager.stats:GetAbilityID( "sisters_holy_rage" )
+	end
+end
+
+function SistersPenitentEngineTactic:DoAbilities()
+	
+	-- Boosts combat performance 
+	local fast_melee = not cpu_manager:IsInMelee( self.squad_ai ) and self.squad_ai:IsUnderAttack()
+
+	-- this is bugged	
+	-- if ( fast_melee ) then
+		-- self.squad_ai:DoSpecialAbility( SistersPenitentEngine.iHolyRageID )
+	-- end
+end
+

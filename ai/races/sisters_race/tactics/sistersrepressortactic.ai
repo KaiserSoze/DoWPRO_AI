@@ -1,0 +1,60 @@
+----------------------------------------
+-- File: 'SistersRhinotactic.ai'
+-- Edited by Thudmeizer @ 23.03.2008
+
+class 'SistersRepressorTactic' (SistersVehicleTactic)
+
+SistersRepressor = {}
+
+function SistersRepressorTactic:__init( squad_ai ) super( squad_ai )
+
+	self:SetName("Sisters Repressor Tactic")
+	
+	-- Set upgrade type
+	local oEnemy = cpu_manager:FindClosestEnemyPlayer()
+	if (oEnemy and oEnemy:GetPlayerRaceName() == "chaos_marine_race" and math.random(1, 2) == 1) then
+		self.bLongRange = false
+	else
+		self.bLongRange = true
+	end
+
+	-- Vehicle is a light transport
+	self.m_iTransportVehicle = 1
+	self.m_iTransportSlots = 2
+end
+
+function SistersRepressorTactic:InitAbilities()
+
+	-- Init ability ID's
+	if (SistersRepressor.hailers_id == nil) then
+		SistersRepressor.hailers_id = cpu_manager.stats:GetAbilityID( "sisters_laud_hailers" )
+	end
+end
+
+function SistersRepressorTactic:DoAbilities()
+
+	-- Adversely affects enemy morale but boosts allies
+	if (self.squad_ai:IsInCombat()) then
+		Ability.DoAbilityArea(self.squad_ai, SistersRepressor.hailers_id, Ability.Filters.CloseInfantryEnemy, 10, 3)
+	end
+end
+
+function SistersRepressorTactic:Upgrade()
+
+	-- Check if we have free ressources
+	if (not Tactic.Options.can_reinforce) then
+		return
+	end
+
+	-- Check situation
+	if (not self.squad_ai:HasUpgradableTrooper() or self.squad_ai:GetHealthPercentage() < 0.5 or self.squad_ai:IsUnderAttack()) then
+		return
+	end
+	
+	-- Check upgrade type
+	if (self.bLongRange) then
+	
+		-- Upgrade to flamer
+		self.squad_ai:DoBestUpgrade(UnitStatsAI.UC_MonsterMed)
+	end
+end

@@ -1,0 +1,74 @@
+----------------------------------------
+-- File: 'sistersimagifertactic.ai'
+-- Edited by Thudmeizer @ 23.03.2008
+
+class 'SistersImagiferTactic' (SistersInfantryTactic)
+
+SistersImagifer = {}
+
+function SistersImagiferTactic:__init( squad_ai ) super( squad_ai )
+
+	self:SetName("Sisters Imagifer Tactic")
+end
+
+function SistersImagiferTactic:IsAttacker()
+
+	return self:IsCommanderAttacker()
+end
+
+function SistersImagiferTactic:IsDefender()
+
+	return self:IsCommanderDefender()
+end
+
+function SistersImagiferTactic:InitAbilities()
+
+	-- Init ability ID's
+	if (SistersImagifer.seal_id == nil) then
+		SistersImagifer.seal_id = cpu_manager.stats:GetAbilityID( "sisters_seal_of_purity" )
+	end
+
+	if (SistersImagifer.touch_id == nil) then
+		SistersImagifer.touch_id = cpu_manager.stats:GetAbilityID( "sisters_act_of_faith_emperors_touch" )
+	end
+end
+
+function SistersImagiferTactic:DoAbilities()
+
+	-- Increases close combat melee defensive bonus and enables charge modifiers 
+	if (self.squad_ai:IsAttached() and self.squad_ai:IsAttacking() and self.squad_ai:CanDoAbility(SistersImagifer.seal_id)) then
+	
+		-- Increases the close combat melee defensive bonus 
+		if (self.squad_ai:CanDoAbility(SistersImagifer.seal_id)) then
+			self.squad_ai:DoSpecialAbility(SistersImagifer.seal_id) 
+		end
+	end
+
+	-- Attached ranged squads do extra damage 
+	if (self.squad_ai:IsAttached() and self.squad_ai:IsAttacking() and self.squad_ai:CanDoAbility(SistersImagifer.touch_id)) then
+		self.squad_ai:DoSpecialAbility(SistersImagifer.touch_id) 
+	end
+end
+
+function SistersImagiferTactic:Update()
+
+	if (self:IsComplete()) then
+		return
+	end
+
+	if not InfantryTactic.Update( self ) then
+		return false
+	end
+
+	-- Try to attach to melee in tier 2+
+	if (cpu_manager:GetTierLevel() >= 2 or self.squad_ai:WasRecentlyHurt()) then
+	
+		if (self:TryAttachSquad(true, true, 50, 100, nil) ~= nil) then
+			return
+		end
+		
+		if (self:TryAttachSquad(false, true, 50, 100, nil) == nil) then
+			self:TryAttachSquadMelee()
+		end
+	end
+end

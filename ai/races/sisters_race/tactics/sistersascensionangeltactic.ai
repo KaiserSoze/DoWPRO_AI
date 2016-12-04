@@ -1,0 +1,75 @@
+----------------------------------------
+-- File: 'SistersAscensionAngelTactic.ai'
+-- Edited by Arkhan @ 02.07.2011
+
+class 'SistersAscensionAngelTactic' (SistersInfantryTactic)
+
+function SistersAscensionAngelTactic:__init( squad_ai ) super( squad_ai )
+
+	self:SetName("Sisters Ascension Angel Tactic")
+	
+	Tactic.AssignStateFunction( self, Tactic.States.Idle, SistersAscensionAngelTactic.BeginIdleState )
+	Tactic.AssignStateFunction( self, Tactic.States.Hold, SistersAscensionAngelTactic.BeginHoldState )
+	Tactic.AssignStateFunction( self, Tactic.States.Retreat, SistersAscensionAngelTactic.BeginRetreatState )
+	Tactic.AssignStateFunction( self, Tactic.States.Attack, SistersAscensionAngelTactic.BeginAttackState )
+	
+	self:SetState(Tactic.States.Attack)
+end
+
+function SistersAscensionAngelTactic:AlwaysAttack()
+	return true
+end
+
+function SistersAscensionAngelTactic:BeginIdleState()
+	SistersAscensionAngelTactic.DoAttack(self)
+end
+
+function SistersAscensionAngelTactic:BeginHoldState()
+	SistersAscensionAngelTactic.DoAttack(self)
+end
+
+function SistersAscensionAngelTactic:BeginAttackState()
+	SistersAscensionAngelTactic.DoAttack(self)
+end
+
+function SistersAscensionAngelTactic:BeginRetreatState()
+	SistersAscensionAngelTactic.DoAttack(self)
+end
+
+function SistersAscensionAngelTactic:DoAttack()
+
+	-- Check move delay
+	if (g_iGMT < self.m_iMoveDelay + 5 and self.squad_ai:IsInStateAttackMove() and not self.squad_ai:IsIdle()) then
+		return
+	end
+
+	-- Check if we are in combat
+	if (self.squad_ai:IsInCombat()) then
+		return
+	end
+
+	-- Get closest enemy
+	self.target = self:SearchTarget()
+	
+	-- Attack move to target
+	self.squad_ai:DoAttackMove(self.target)
+	self.m_iMoveDelay = g_iGMT	
+end
+
+function SistersAscensionAngelTactic:SearchTarget()
+
+	-- Search closest enemy unit in range
+	local iProximityDistance = 70
+	local vMyPos = self.squad_ai:GetPosition()
+	local oEnemy = cpu_manager.cpu_player:FindFirstEnemy(vMyPos, iProximityDistance, 1)
+	if (oEnemy ~= nil) then
+		return oEnemy:GetPosition()
+	end
+	
+	-- Search closest enemy building in range
+	oEnemy = cpu_manager.cpu_player:FindFirstBaseEnemy(vMyPos, iProximityDistance, 1)
+	if (oEnemy ~= nil) then
+		return oEnemy:GetPosition()
+	end
+	return vMyPos
+end

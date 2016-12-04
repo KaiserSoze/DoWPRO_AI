@@ -1,0 +1,54 @@
+----------------------------------------
+-- File: 'iconbearertactic.ai'
+-- Edited by Thudmeizer @ 09.03.2005
+-- Edited by LarkinVB   @ 31.07.2005
+
+class 'IconBearerTactic' (ChaosMarineInfantryTactic)
+
+IconBearer = {}
+
+function IconBearerTactic:__init( squad_ai ) super( squad_ai )
+	self:SetName("Icon Bearer Tactic")
+end
+
+--should only attack/defend when attached
+function IconBearerTactic:IsAttacker()
+    return false
+end
+
+function IconBearerTactic:IsDefender()
+    return true
+end
+
+function IconBearerTactic:InitAbilities()
+
+	-- Init ability ID's
+	if (IconBearer.rally_id == nil) then
+		IconBearer.rally_id = cpu_manager.stats:GetAbilityID("chaos_raise_icon")
+	end
+end
+
+function IconBearerTactic:DoAbilities()
+
+	-- Try to restore morale when broken
+	if (self.squad_ai:IsBroken() and self.squad_ai:CanDoAbility(IconBearer.rally_id)) then
+		self.squad_ai:DoSpecialAbility(IconBearer.rally_id)
+	end
+end
+
+function IconBearerTactic:Update()
+
+	if self:IsComplete() then
+		return
+	end
+	
+	--state machine
+	if not InfantryTactic.Update( self ) then
+		return
+	end
+
+	-- Attach to squad
+	if (self:TryAttachSquad( true, false, 50, 250, nil ) == nil) then
+	   	self:TryAttachSquadMelee()
+	end
+end

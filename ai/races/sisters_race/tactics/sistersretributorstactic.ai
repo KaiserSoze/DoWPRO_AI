@@ -1,0 +1,60 @@
+----------------------------------------
+-- File: 'SistersRetributorsTactic.ai'
+-- Edited by Arkhan @ 05.02.2012
+
+class 'SistersRetributorsTactic' (SistersInfantryTactic)
+
+SistersRetributors = {}
+
+function SistersRetributorsTactic:__init( squad_ai ) super( squad_ai )
+
+	self:SetName("Sisters Retributors Tactic")
+	
+	-- Set upgrade type
+	self.bLongRange = (math.random(1, 2) == 1)
+end
+
+function SistersRetributorsTactic:InitAbilities()
+
+	-- Init ability ID's
+	if (SistersRetributors.iDivineGuidance == nil) then
+		SistersRetributors.iDivineGuidance = cpu_manager.stats:GetAbilityID( "sisters_divine_guidance" )
+	end
+end
+
+function SistersRetributorsTactic:DoAbilities()
+
+	-- Reduces setup time 
+	if (self.bLongRange and self:IsMoving()) then
+		Ability.DoAbility(self.squad_ai, SistersRetributors.iDivineGuidance, Ability.PredicateFilters.IsInStateAttackMove)
+	end
+		
+	-- Compute common abilities
+	SistersInfantryTactic.DoAbilities(self)
+end
+
+function SistersRetributorsTactic:Upgrade()
+
+	-- Check if we are reinforcing
+	if (self.squad_ai:IsReinforcing() or not self.squad_ai:HasUpgradableTrooper()) then
+		return
+	end
+
+	-- If I am broken, don't upgrade!
+	if (self:IsAffectedByMorale() and self.squad_ai:IsBroken()) then
+		return
+	end	
+	
+	-- Only upgrade in healthy state
+	if (self.squad_ai:GetNumTroopers() < self.squad_ai:GetMaxTroopers() * 0.5 or self.squad_ai:GetHealthPercentage() < 0.6 or self.squad_ai:IsUnderAttack()) then
+		return
+	end
+	
+	-- Check upgrade type
+	if (self.bLongRange) then
+	
+		-- Upgrade to multi melta
+	    self.squad_ai:DoBestUpgrade(UnitStatsAI.UC_VehicleMed)
+	    self.bLongRange = true
+	end
+end

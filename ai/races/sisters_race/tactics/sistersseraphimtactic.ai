@@ -1,0 +1,115 @@
+----------------------------------------
+-- File: 'sistersseraphimtactic.ai'
+-- Edited by Thudmeizer @ 15.11.2007
+
+class 'SistersSeraphimTactic' (SistersInfantryTactic)
+
+SistersSeraphim = {}
+
+function SistersSeraphimTactic:__init( squad_ai ) super( squad_ai )
+
+	self:SetName("Sisters Seraphim Tactic")
+	
+	-- Set upgrade type
+	self.bLongRange = (math.random(1, 2) == 1)
+end
+
+function SistersSeraphimTactic:InitAbilities()
+
+	-- Init ability ID's
+	if (SistersSeraphim.visage_id == nil) then
+		SistersSeraphim.visage_id = cpu_manager.stats:GetAbilityID( "sisters_angelic_visage" )
+	end
+
+	if (SistersSeraphim.krak_id == nil) then
+		SistersSeraphim.krak_id = cpu_manager.stats:GetAbilityID( "sisters_krak_grenades" )
+	end
+end
+
+function SistersSeraphimTactic:DoAbilities()
+	
+	-- Check if we are in combat
+	if (self.squad_ai:IsInCombat() and self.squad_ai:IsBroken()) then
+
+		-- Reduces morale damage and boosts combat performance 
+		Ability.DoAbility(self.squad_ai, SistersSeraphim.visage_id)
+		
+		-- Krak grenades
+		Ability.DoAbilityTarget( self.squad_ai, SistersSeraphim.krak_id, Ability.Filters.CloseVehicleEnemy, 1 )
+		Ability.DoAbilityTargetEntity( self.squad_ai, SistersSeraphim.krak_id, Ability.EntityFilters.CloseBaseEntityEnemy, 1)
+	end
+end
+
+function SistersSeraphimTactic:Upgrade()
+
+	-- Check if we are reinforcing
+	if (self.squad_ai:IsReinforcing() or not self.squad_ai:HasUpgradableTrooper()) then
+		return
+	end
+
+	-- If I am broken, don't upgrade!
+	if (self:IsAffectedByMorale() and self.squad_ai:IsBroken()) then
+		return
+	end	
+	
+	-- Only upgrade in healthy state
+	if (self.squad_ai:GetNumTroopers() < self.squad_ai:GetMaxTroopers() * 0.5 or self.squad_ai:GetHealthPercentage() < 0.5 or self.squad_ai:IsUnderAttack()) then
+		return
+	end
+		
+	-- Check upgrade type
+	if (self.bLongRange) then
+	
+		-- Upgrade to inferno pistol
+		self.squad_ai:DoBestUpgrade(UnitStatsAI.UC_VehicleMed)
+	end
+	
+function SistersSeraphimTactic:UpdateStance()
+
+	-- Default stance ranged
+	local bRanged = true
+
+	-- Check if closest enemy unit is light infantry
+	local oSquad = cpu_manager.cpu_player:FindFirstEnemy(self.squad_ai:GetPosition(), 25, 1)
+	if (oSquad ~= nil and not oSquad:IsInfiltrating()) then
+	
+		-- Get unit stats
+		local oStats = oSquad:GetStats()
+		if (oStats ~= nil) then
+			
+			-- Check armour class
+			local eClass = oStats:GetClass()
+			if (eClass == UnitStatsAI.UC_LightInfantryLow or
+				eClass == UnitStatsAI.UC_LightInfantryMed or
+				eClass == UnitStatsAI.UC_LightInfantryHigh) then
+				bRanged = false
+			end
+		end
+	end
+
+	-- Check if the squad is melee or ranged
+	if (not bRanged) then
+
+		-- Set assault stance
+		if (self.squad_ai:GetMeleeStance() ~= SquadAI.MSTANCE_Assault) then
+			self.squad_ai:DoSetMeleeStance(SquadAI.MSTANCE_Assault)
+		end
+		
+		-- Set attack stance
+		if (self.squad_ai:GetStance() ~= SquadAI.STANCE_Attack) then
+			self.squad_ai:DoSetStance( SquadAI.STANCE_Attack )
+		end
+	else
+	
+		-- Set ranged stance
+		if (self.squad_ai:GetMeleeStance() ~= SquadAI.MSTANCE_Ranged) then
+			self.squad_ai:DoSetMeleeStance(SquadAI.MSTANCE_Ranged)
+		end
+		
+		-- Set stand ground stance
+		if (self.squad_ai:GetStance() ~= SquadAI.STANCE_StandGround) then
+			self.squad_ai:DoSetStance( SquadAI.STANCE_StandGround )
+		end
+	end
+end
+end

@@ -1,0 +1,74 @@
+----------------------------------------
+-- File: 'sistersmissionaryservitortactic.ai'
+-- Edited by Thudmeizer @ 23.03.2008
+
+class 'SistersHospitallerTactic' (SistersInfantryTactic)
+
+SistersHospitaller = {}
+
+function SistersHospitallerTactic:__init( squad_ai ) super( squad_ai )
+
+	self:SetName("Sisters Hospitaller Tactic")
+end
+
+function SistersHospitallerTactic:IsAttacker()
+
+	return self:IsCommanderAttacker()
+end
+
+function SistersHospitallerTactic:IsDefender()
+
+	return self:IsCommanderDefender()
+end
+
+function SistersHospitallerTactic:InitAbilities()
+
+	-- Init ability ID's
+	if (SistersHospitaller.medics_id == nil) then
+		SistersHospitaller.medics_id = cpu_manager.stats:GetAbilityID( "sisters_battlefield_medics" )
+	end
+
+	if (SistersHospitaller.touch_id == nil) then
+		SistersHospitaller.touch_id = cpu_manager.stats:GetAbilityID( "sisters_act_of_faith_emperors_touch" )
+	end
+end
+
+function SistersHospitallerTactic:DoAbilities()
+
+	-- Heals attached/nearby allies squads 
+	if (self.squad_ai:IsAttached() and self.squad_ai:WasRecentlyHurt() and self.squad_ai:GetHealthPercentage() < 0.8) then
+	
+		-- Attached ranged squads do extra damage 
+		if (self.squad_ai:CanDoAbility(SistersHospitaller.medics_id)) then
+			self.squad_ai:DoSpecialAbility(SistersHospitaller.medics_id) 
+		end
+	end
+	
+	-- Attached ranged squads do extra damage
+	if (self.squad_ai:IsAttached() and self.squad_ai:IsAttacking() and self.squad_ai:CanDoAbility(SistersHospitaller.touch_id)) then
+		self.squad_ai:DoSpecialAbility(SistersHospitaller.touch_id) 
+	end
+end
+
+function SistersHospitallerTactic:Update()
+
+	if (self:IsComplete()) then
+		return
+	end
+
+	if not InfantryTactic.Update( self ) then
+		return false
+	end
+
+	-- Try to attach to melee in tier 2+
+	if (cpu_manager:GetTierLevel() >= 2 or self.squad_ai:WasRecentlyHurt()) then
+	
+		if (self:TryAttachSquad(true, true, 50, 100, nil) ~= nil) then
+			return
+		end
+		
+		if (self:TryAttachSquad(false, true, 50, 100, nil) == nil) then
+			self:TryAttachSquadMelee()
+		end
+	end
+end

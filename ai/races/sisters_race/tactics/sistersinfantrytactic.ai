@@ -1,0 +1,99 @@
+----------------------------------------
+-- File: 'sistersinfantrytactic.ai'
+-- Edited by Thudmeizer		@ 26.10.2008
+
+class 'SistersInfantryTactic' (InfantryTactic)
+
+function SistersInfantryTactic:__init( squad_ai ) super( squad_ai )
+
+	self:SetName("Sisters Infantry Tactic")
+
+	-- Set infantry options
+	local sSquadName = squad_ai:GetSquadName()
+	if (sSquadName == "sisters_squad_adeptus_arbites_melee" or
+		sSquadName == "sisters_squad_battle_sister" or
+		sSquadName == "sisters_squad_celestian" or
+		sSquadName == "sisters_squad_retributors" or
+		sSquadName == "sisters_squad_imagifer" or
+		sSquadName == "sisters_squad_hospitaller" or
+		sSquadName == "sisters_squad_assassin" or
+		sSquadName == "sisters_squad_repentia" or
+		sSquadName == "sisters_squad_canoness" or
+		sSquadName == "sisters_squad_confessor") then
+        self.m_iTransportable = 1
+	end
+end
+
+function SistersInfantryTactic:AddTargetAbilities()
+	table.insert(InfantryTactic.TargetAbilities, { nil, "sisters_phosphor_grenades", Ability.Filters.CloseSquadEnemy, 4, 0 })
+end
+
+function SistersInfantryTactic:AddCommanders()
+	table.insert(self.commander, { "sisters_squad_canoness", true })
+	table.insert(self.commander, { "sisters_squad_confessor", false })
+end
+
+function SistersInfantryTactic:DoAbilities()
+
+	-- I might have these attached
+	if (self.squad_ai:IsAttached()) then
+
+	    if (self.squad_ai:HasSquadAttached("sisters_squad_confessor")) then
+			SistersConfessorTactic.InitAbilities( self )
+			SistersConfessorTactic.DoAbilities( self )
+		elseif (self.squad_ai:HasSquadAttached("sisters_squad_hospitaller")) then
+			SistersHospitallerTactic.InitAbilities( self )
+			SistersHospitallerTactic.DoAbilities( self )
+		elseif (self.squad_ai:HasSquadAttached("sisters_squad_imagifer")) then
+			SistersImagiferTactic.InitAbilities( self )
+		end
+	end
+end
+
+function SistersInfantryTactic:CheckForDetach()
+
+	-- Set detach health
+	local fDetachHealth = self.m_fCommanderAttachHealth + 0.4
+
+	-- Detach healthy commanders
+	if (self:CommanderAttached() or self.squad_ai:HasSquadAttached( "sisters_squad_hospitaller" )) then
+		
+		-- Detach only from capturing or ranged squads
+		if (self.squad_ai:IsCapturing() or (self.squad_ai:GetAttachedHealthPercentage() > fDetachHealth and self.squad_ai:IsRanged())) then
+			self.squad_ai:DoDetachSquad()
+			self.squad_ai:DoSetDefaultMeleeStance()
+		end
+	end
+	
+	-- Detach commander from broken/capturing. sisters mini heroes stay attached
+	if ((self.squad_ai:IsBroken() or self.squad_ai:IsCapturing()) and
+		(self.squad_ai:IsInCombat() or self.squad_ai:WasRecentlyHurt()) and
+		not self.squad_ai:HasSquadAttached( "sisters_squad_hospitaller" ) and
+		not self.squad_ai:HasSquadAttached( "sisters_squad_imagifer" )) then
+		
+		self.squad_ai:DoDetachSquad()
+		self.squad_ai:DoSetDefaultMeleeStance()
+	end
+end
+
+function SistersInfantryTactic:CheckDance(oSquad)
+
+	-- Check opponent
+	if (oSquad == nil) then
+		return false
+	end
+	
+	-- Compare opponents
+	local sSquadName = self.squad_ai:GetSquadName()
+	if (sSquadName == "sisters_squad_battle_sister" or sSquadName == "sisters_squad_celestian") then
+		
+		-- Check opponent
+		if (oSquad:GetSquadName() == "chaos_squad_cultist" or
+		    oSquad:GetSquadName() == "orks_squad_slugga" or
+		    oSquad:GetSquadName() == "guard_squad_guardsmen" or
+			oSquad:GetSquadName() == "sisters_squad_adeptus_arbites_melee") then
+			return false
+		end
+	end
+	return true
+end
