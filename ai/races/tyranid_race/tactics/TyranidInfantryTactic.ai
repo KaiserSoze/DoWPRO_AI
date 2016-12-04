@@ -1,0 +1,50 @@
+----------------------------------------
+-- File: 'tyranidinfantrytactic.ai'
+-- Created by Thudmeizer @ 05.01.2008
+-- Updated by Gambit	 @ 25.09.2015
+
+class 'TyranidInfantryTactic' (InfantryTactic)
+
+
+function TyranidInfantryTactic:__init( squad_ai ) super( squad_ai )
+
+	self:SetName("Tyranid Infantry Tactic")
+end
+
+
+function TyranidInfantryTactic:AddCommanders()
+	table.insert(self.commander, { "hive_tyrant_squad", false })
+	table.insert(self.commander, { "swarmlord_squad", false })
+end
+
+
+function TyranidInfantryTactic:DoAbilities()
+
+	local sSquadName = self.squad_ai:GetSquadName()
+
+	if (sSquadName == "zoanthrope_squad") then
+		local catalyst_id = cpu_manager.stats:GetAbilityID( "tyranids_catalyst" )
+		Ability.DoAbilityTarget( self.squad_ai, catalyst_id, Ability.Filters.CloseHurt ) 
+	end
+
+	-- Call basic DoAbilities methods
+	InfantryTactic.DoAbilities(self)
+end
+
+
+function TyranidInfantryTactic:CheckDance(oSquad)
+
+	-- Check opponent
+	if (oSquad == nil) then
+		return false
+	end
+	
+	-- Compare opponents
+	local sSquadName = self.squad_ai:GetSquadName()
+
+	if (sSquadName == "biovore_squad" or sSquadName == "ravener_squad" or
+		sSquadName == "termagaunt_squad" or sSquadName == "hormagaunt_squad") then
+		return true
+	end
+	return false
+end

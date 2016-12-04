@@ -207,7 +207,7 @@ function SistersBuildBaseStrategy:GetAddonBuilding( sType )
 
 	for i = 1, table.getn(self.heroeWargear) do
 		if (sType == self.heroeWargear[i][HeroeWargearNameIndex]) then
-			return "sisters_hq"
+			return "sisters_sanctuary"
 		end
 	end
 	return nil
@@ -218,6 +218,10 @@ function SistersBuildBaseStrategy:GetUnitStats(sSquadName)
 
 	if (sSquadName == "sisters_squad_adeptus_arbites_melee") then
 		return 1, 0
+	elseif (sSquadName == "sisters_squad_hospitaller") then
+	    return 1, 0
+	elseif (sSquadName == "sisters_squad_imagifer") then
+	    return 1, 0
 	elseif (sSquadName == "sisters_squad_battle_sister") then
 		return 2, 0
 	elseif (sSquadName == "sisters_squad_seraphim") then

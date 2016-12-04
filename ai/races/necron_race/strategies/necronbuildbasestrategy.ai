@@ -119,7 +119,7 @@ function NecronBuildBaseStrategy:GetAddonBuilding( sType )
 	
 	for i = 1, table.getn(self.heroeWargear) do
 		if (sType == self.heroeWargear[i][HeroeWargearNameIndex]) then
-			return "monolith"
+			return "necron_forbidden_archive"
 		end
 	end
 	
@@ -709,10 +709,6 @@ function NecronBuildBaseStrategy:RelicRequired(sName)
 		return true
 	elseif (sName == "necron_wargear_upgrade_02_reaping_blades_research_mp") then
 		return true
-	--elseif (sName == "necron_wargear_upgrade_03_necrotyr_sigils_research_mp") then
-	--	return true
-	--elseif (sName == "necron_wargear_upgrade_04_gauss_flayer_research_mp") then
-	--	return true
 	end
 	return false
 end

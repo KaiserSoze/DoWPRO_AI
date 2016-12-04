@@ -445,10 +445,6 @@ function MarineBuildBaseStrategy:RelicRequired(sName)
 		return true
 	elseif (sName == "marine_wargear_upgrade_02_daemon_hammer_research_mp") then
 		return true
-	elseif (sName == "marine_wargear_upgrade_03_plasma_pistol_research_mp") then
-		return true
-	elseif (sName == "marine_wargear_upgrade_04_multi_melta_research_mp") then
-		return true
 	end
 	return false
 end

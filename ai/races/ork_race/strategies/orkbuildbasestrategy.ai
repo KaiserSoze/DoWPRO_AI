@@ -481,10 +481,6 @@ function OrkBuildBaseStrategy:RelicRequired(sName)
 		return true
 	elseif (sName == "ork_wargear_upgrade_02_mega_claw_wargear_research_mp") then
 		return true
-	elseif (sName == "ork_wargear_upgrade_03_big_shoota_wargear_research_mp") then
-		return true
-	elseif (sName == "ork_wargear_upgrade_04_mega_blasta_wargear_research_mp") then
-		return true
 	end
 	return false
 end

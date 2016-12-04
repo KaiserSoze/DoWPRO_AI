@@ -27,9 +27,9 @@ HeroeWargearPowIndex = 3
 stack_trace_num = 0
 tracing = {}
 
-g_bAITrace = false
+g_bAITrace = true
 
-g_bDebugMode = false
+g_bDebugMode = true
 
 function aitrace( msg, bAILog, bReset )
 

@@ -1,0 +1,34 @@
+----------------------------------------
+-- File: 'RavenerTactic.ai'
+-- Created by Gambit	@ 28.09.2015
+
+class 'RavenerTactic' (TyranidInfantryTactic)
+
+function RavenerTactic:__init( squad_ai ) super( squad_ai )
+
+	self:SetName("Ravener Tactic")
+end
+
+function RavenerTactic:DoAbilities()
+
+	-- Perform a burrow (jump) attack
+	if self.squad_ai:GetHealthPercentage() > 0.35 then
+		local vCurrentPosition = self.squad_ai:GetPosition()
+		local iJumpRange = self.squad_ai:GetJumpDistance()
+		local oSquad = Ability.Filters.CloseInfantryEnemy(vCurrentPosition, iJumpRange, 1)
+		if oSquad == nil then
+			oSquad = Ability.Filters.CloseMonsterEnemy(vCurrentPosition, iJumpRange, 1)
+		end
+		if oSquad == nil then
+			oSquad = Ability.Filters.CloseCommanderEnemy(vCurrentPosition, iJumpRange, 1)
+		end
+		if oSquad ~= nil then
+			if oSquad:IsValid() then
+				local vTarget = oSquad:GetPosition()
+				if self.squad_ai:CanJumpToPosition(vTarget) then
+					self.squad_ai:DoJump(vTarget)
+				end
+			end
+		end
+	end
+end

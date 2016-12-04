@@ -1,0 +1,29 @@
+----------------------------------------
+-- File: 'SporeMineTactic.ai'
+-- Edited by Gambit	@ 29.09.2015
+
+class 'SporeMineTactic' (TyranidInfantryTactic)
+
+SporeMines = {}
+
+function SporeMineTactic:__init( squad_ai ) super( squad_ai )
+
+	self:SetName("Spore Mines Tactic")
+end
+
+
+function SporeMineTactic:AlwaysAttack()
+	return true
+end
+
+
+function SporeMineTactic:InitAbilities()
+	if SporeMines.iExplode == nil then
+		SporeMines.iExplode = cpu_manager.stats:GetAbilityID( "tyranids_self_destruct" )	
+	end
+end
+
+
+function SporeMineTactic:DoAbilities()
+	--Ability.DoAbility( self.squad_ai, SporeMines.iExplode, Ability.Filters.IsInCombat )
+end

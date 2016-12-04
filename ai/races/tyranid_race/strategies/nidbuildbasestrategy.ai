@@ -1,0 +1,356 @@
+----------------------------------------
+-- File: 'tyranidbuildbasestrategy.ai'
+-- Edited by Thudmeizer @ 17.10.2011
+
+class 'TyranidBuildBaseStrategy' (BuildBaseStrategy)
+
+function MarineBuildBaseStrategy:__init( baseinfo ) super( baseinfo )
+
+	-- Add build items that can cause an "invalid addon" console message
+	CpuPrerequisites2.AddSpecialItem("tyranids_wargear_upgrade_lvl_1_adrenal_glands_addon", CpuPrerequisites.BT_AddOn)
+	CpuPrerequisites2.AddSpecialItem("tyranids_wargear_upgrade_lvl_1_psy_reinforce_addon", CpuPrerequisites.BT_AddOn)
+	CpuPrerequisites2.AddSpecialItem("tyranids_wargear_upgrade_lvl_2_articulated_carapace_addon", CpuPrerequisites.BT_AddOn)
+	CpuPrerequisites2.AddSpecialItem("tyranids_wargear_upgrade_lvl_2_reinforced_synapse_link_addon", CpuPrerequisites.BT_AddOn)
+	CpuPrerequisites2.AddSpecialItem("tyranids_wargear_upgrade_lvl_3_leech_essence_addon", CpuPrerequisites.BT_AddOn)
+	CpuPrerequisites2.AddSpecialItem("tyranids_wargear_upgrade_lvl_3_swarmlord_addon", CpuPrerequisites.BT_AddOn)
+
+	-- Add detector units (Best first, worst last)
+	self:AddDetectorUnit("hive_tyrant_squad")
+	self:AddDetectorUnit("swarmlord_squad")
+	self:AddDetectorUnit("zoanthrope_squad")
+	self:AddDetectorUnit("lictor_squad")
+	self:AddDetectorUnit("spore_mine_squad")
+
+	self.heroeWargear = {}
+	
+	--Heroe Wargear
+	-- Name, Req, Power
+	table.insert(self.heroeWargear, {"tyranids_wargear_upgrade_lvl_1_adrenal_glands_addon",80,50})
+	table.insert(self.heroeWargear, {"tyranids_wargear_upgrade_lvl_1_psy_reinforce_addon",80,50})
+	table.insert(self.heroeWargear, {"tyranids_wargear_upgrade_lvl_2_articulated_carapace_addon",120,80})
+	table.insert(self.heroeWargear, {"tyranids_wargear_upgrade_lvl_2_reinforced_synapse_link_addon",120,80})
+	table.insert(self.heroeWargear, {"tyranids_wargear_upgrade_lvl_3_leech_essence_addon",160,140})
+	table.insert(self.heroeWargear, {"tyranids_wargear_upgrade_lvl_3_swarmlord_addon",200,180})
+	
+	self.HeroSquadName = "hive_tyrant_squad"
+	
+	local heroeDelayLimit = 10 --% of waiting for the upgrade
+	local heroeDelay = math.random (1,100)
+	local heroeWargearCostFactor = 1.5
+	aipushtrace ("BuildBaseStrategy:Heroe Wargear Election")
+	
+	--choose Upgrades
+	self.heroeWargearPattern1 = math.random(1,2)
+	self.heroeWargearPattern2 = math.random(3,4)
+	self.heroeWargearPattern3 = math.random(5,6)
+	
+	aitrace ("Heroe Wargear T1: "..self.heroeWargear[self.heroeWargearPattern1][HeroeWargearNameIndex])
+	aitrace ("Heroe Wargear T2: "..self.heroeWargear[self.heroeWargearPattern2][HeroeWargearNameIndex])
+	aitrace ("Heroe Wargear T3: "..self.heroeWargear[self.heroeWargearPattern3][HeroeWargearNameIndex])
+	
+	if heroeDelay <= heroeDelayLimit then
+		aipoptrace ("Heroe Wargear Delayed")
+		for i = 1, table.getn(self.heroeWargear) do
+			self.heroeWargear[i][HeroeWargearReqIndex]=self.heroeWargear[i][HeroeWargearReqIndex]*heroeWargearCostFactor
+			self.heroeWargear[i][HeroeWargearPowIndex]=self.heroeWargear[i][HeroeWargearPowIndex]*heroeWargearCostFactor
+		end
+	else
+		aipoptrace ("Heroe Wargear Not Delayed")
+	end
+end	
+	
+function TyranidBuildBaseStrategy:GetBuildingName( sType )
+
+	-- Return race specific object string
+	if (sType == "HQ") then
+		return "tyranids_hq"
+
+	elseif (sType == "Generator") then
+		return "tyranids_generator"
+
+	elseif (sType == "BiggerGenerator") then
+		return "tyranids_big_generator"
+		
+	elseif (sType == "VehicleBuilding") then
+		return "tyranids_capillary_vein"
+		
+	elseif (sType == "ListeningPost") then
+		return "tyranids_listening_post"
+		
+	elseif (sType == "Turret") then
+		return nil
+
+	elseif (sType == "Mine") then
+		return nil
+	end
+	
+	return nil
+end
+
+function TyranidBuildBaseStrategy:GetAddonBuilding( sType )
+
+	if (sType == "tyranids_hq_addon_1") then
+		return "tyranids_hq"
+
+	elseif (sType == "tyranids_hq_addon_2") then
+		return "tyranids_hq"
+		
+	elseif (sType == "tyranids_list_post_addon_1") then
+		return "tyranids_listening_post"
+
+	elseif (sType == "tyranids_list_post_addon_2") then
+		return "tyranids_listening_post"
+		
+	end
+
+	for i = 1, table.getn(self.heroeWargear) do
+		if (sType == self.heroeWargear[i][HeroeWargearNameIndex]) then
+			return "tyranids_hq"
+		end
+	end
+	return nil
+end
+
+-- Arkhan 11.2005: Returns the squad cap and support cap of the given squad
+function TyranidBuildBaseStrategy:GetUnitStats(sSquadName)
+
+	if (sSquadName == "termagaunt_squad") then
+		return 2, 0
+	elseif (sSquadName == "hormagaunt_squad") then
+		return 2, 0
+	elseif (sSquadName == "spinegaunt_squad") then
+		return 2, 0
+	elseif (sSquadName == "genestealer_squad") then
+		return 1, 0
+	elseif (sSquadName == "ravener_squad") then
+		return 3, 0
+	elseif (sSquadName == "warrior_brood_squad") then
+		return 3, 0
+	elseif (sSquadName == "zoanthrope_squad") then
+		return 3, 3
+	elseif (sSquadName == "biovore_squad") then
+		return 2, 2
+	elseif (sSquadName == "carnifex_squad") then
+		return 2, 3
+	elseif (sSquadName == "carnifex_screamer_killer_squad") then
+		return 2, 3
+	elseif (sSquadName == "tyrant_guard_squad") then
+		return 3, 2
+	end
+	return 0, 0
+end
+
+-- Arkhan 01.2006: Inherited method to check if an addon is a tier addon
+function TyranidBuildBaseStrategy:IsTierAddon( sName, iTargetTier )
+
+	-- Check addon name and target tier
+	if (sName == "tyranids_hq_addon_1" and iTargetTier == 2) then
+		return true
+	elseif (sName == "tyranids_hq_addon_2" and iTargetTier == 3) then
+		return true
+	end
+	return false
+end
+
+function TyranidBuildBaseStrategy:UpdateTierLevel()
+
+	-- Reset tier level
+	self.tierLevel = 1
+	
+	-- Prepare
+	local iHQAddon1ID = cpu_manager.stats:GetAddOnID("tyranids_hq_addon_1")
+	local iHQAddon2ID = cpu_manager.stats:GetAddOnID("tyranids_hq_addon_2")
+	local oStats = cpu_manager.stats:GetPlayerStatsFromID( cpu_manager.player_id )
+	
+	-- Check HQ's for addons
+	for oBase in oStats:GetBases() do
+
+		-- Check for valid building
+		if (oBase:IsValid() and not oBase:IsListeningPost()) then
+
+			-- Check for HQ addon 2
+			if (oBase:HasAddOn(iHQAddon2ID)) then		
+				self.tierLevel = 3
+				return
+		
+			-- Check for HQ addon 1
+			elseif (oBase:HasAddOn(iHQAddon1ID)) then
+				self.tierLevel = 2
+			end
+		end
+	end
+end
+
+function TyranidBuildBaseStrategy:BuildFlexible()
+
+	-- Dynamic research
+	local num_gaunt_squads = self:CountSquads("termagaunt_squad")+ self:CountSquads("hormagaunt_squad")
+	local num_genestealer_squads = self:CountSquads("genestealer_squad")
+	local num_ravener_squads =  self:CountSquads("ravener_squad")
+	local num_warrior_squads =  self:CountSquads("warrior_brood_squad")
+	local num_carnifex_squads = self:CountSquads("carnifex_screamer_killer_squad")+ self:CountSquads("carnifex_squad")
+
+        -- Item-Syntax: ResearchName, MinTier, RequisitionCost, PowerCost, MinSquadCap, MinSupportCap, SquadName, SquadMinCount
+	if (num_gaunt_squads > 2) then
+		self:DynamicResearch("tyranids_hormagaunt_research", 2, 125, 75, 0, 0, nil, 0)
+		self:DynamicResearch("tyranids_termagaunt_research", 1, 80, 50,  0, 0, nil, 0)
+	end
+
+	if (num_genestealer_squads > 2) then
+		self:DynamicResearch("tyranids_genestealer_research", 2, 75, 75, 0, 0, nil, 0)
+	end
+
+	if (num_lictor_squads > 2) then
+		self:DynamicResearch("tyranids_lictor_research", 2, 125, 75, 0, 0, nil, 0)
+	end
+	
+	if (num_warrior_squads > 1) then
+		self:DynamicResearch("tyranids_warrior_research1", 2, 125, 75, 0, 0, nil, 0)
+		self:DynamicResearch("tyranids_warrior_research2", 3, 180, 150, 0, 0, nil, 0)
+	end
+
+	if (num_ravener_squads >= 2) then
+		self:DynamicResearch("tyranids_ravener_research", 1, 80, 50, 0, 0, nil, 0)
+	end
+
+	if (num_carnifex_squads > 1) then
+		self:DynamicResearch("tyranids_toxic_miasma_research", 2, 150, 75, 0, 0, nil, 0)
+	end
+	
+	-- Restrict dynamic builds to hard difficulty or higher
+	if (CpuManager.AISettings.bMultiBuildings) then
+	
+		-- Dynamic buildings
+		-- Item-Syntax: BuildingName, BuildingCount, MinTier, MinRequisition, MinPower, MinSquadCap, MinSupportCap
+		self:DynamicBuild("tyranids_capillary_tower", 2, 2, 150, 40, 0, 0)
+		self:DynamicBuild("tyranids_brood_nest", 2, 2, 180, 0, 0, 0)
+		self:DynamicBuild("tyranids_capillary_vein", 2, 2, 200, 150, 0, 0)
+		self:DynamicBuild("tyranids_forward_base", 2, 2, 200, 150, 0, 0)
+	end
+
+	-- Check resources
+	local iPower = resource_manager:GetResourceAmount():Get( ResourceAmount.RT_Power )
+	local iTierLevel = self:GetTierLevel()
+
+	if (iPower < 500 and iTierLevel < 3) or
+	   (iPower < 1000 and iTierLevel > 2) then
+
+		-- Check if a plan exists
+		local iBuildingID = cpu_manager.stats:GetBuildingID("tyranids_generator")
+		if (self:PlanExists("Build Building Plan", iBuildingID)) then
+			return
+		end
+		
+		-- Check if any Hives are in production
+		for oBuildChannel in build_manager:GetBuildChannelAIs() do
+	
+			-- Check building ID
+			if (oBuildChannel:GetBlueprintID() == iBuildingID and not oBuildChannel:ConstructionDone()) then
+				return
+			end
+		end
+		
+		-- Build a Pool
+		local tBuildType = CpuBuildType()
+		tBuildType.btype = CpuPrerequisites.BT_Building
+		tBuildType.name = "tyranids_generator"
+		if (self:TryBuild( tBuildType )) then
+			aitrace("BuildController: Dynamic build of "..tBuildType.name)
+		end
+		return
+	end
+end
+
+-- Arkhan 01.2006: Method to check if force tech should be computed
+function TyranidBuildBaseStrategy:ForceTech()
+
+	-- Check time
+	if (g_iGMT < 60 * CpuManager.ForceTech.StartTier1) then
+		return false
+	end
+	
+	-- Check ressources
+	local iRequisition = resource_manager:GetResourceAmount():Get( ResourceAmount.RT_Requisition )
+	local iPower = resource_manager:GetResourceAmount():Get( ResourceAmount.RT_Power )
+
+	-- Check tier
+	local iTierLevel = self:GetTierLevel()
+	if (iTierLevel == 1) then
+	
+		-- Check resources
+		if (iRequisition > 600 and iPower > 200) then
+			return false
+		end
+		return not self.m_bHQAddon1
+		
+	elseif (iTierLevel == 2) then
+
+		-- Check build channel for capillary veins
+		if (self:GetBuildingCountByName("tyranids_capillary_vein", false) < 1) then
+			return true
+		end
+		
+		-- Check time
+		if (g_iGMT > 60 * CpuManager.ForceTech.StartTier2 and (iRequisition < 600 or iPower < 600)) then
+			return true
+		end
+	end
+	return false
+end
+
+-- Arkhan 03.2006: Return placement type for buildings
+function TyranidBuildBaseStrategy:GetPlacementType(iBuildingID)
+	
+	-- Check building
+	if (iBuildingID == cpu_manager.stats:GetBuildingID("tyranids_hq")) then
+		return "HQ"
+	elseif (iBuildingID == cpu_manager.stats:GetBuildingID("tyranids_brood_nest") or
+			iBuildingID == cpu_manager.stats:GetBuildingID("tyranids_capillary_vein") or
+			iBuildingID == cpu_manager.stats:GetBuildingID("tyranids_forward_base")) then
+        return "Military"
+	elseif (iBuildingID == cpu_manager.stats:GetBuildingID("tyranids_generator") or
+			iBuildingID == cpu_manager.stats:GetBuildingID("tyranids_capillary_tower") or
+			iBuildingID == cpu_manager.stats:GetBuildingID("tyranids_biomass_converter")) then
+		return "BaseBack"	
+	end
+	return "Basic"
+end
+
+-- Arkhan 11.2006: Check if we have enough resources for a bigger generator
+function TyranidBuildBaseStrategy:HasResourcesForBiggerGenerator(iRequisition, iPower)
+
+	-- Check requisition
+	if (iPower < 400 or iRequisition < 100) then
+		return false
+	end
+	return true
+end
+
+-- Arkhan 11.2006: Virtual method for checking out relic units
+function TyranidBuildBaseStrategy:RelicRequired(sName)
+
+	-- Check name
+	-- Check name
+	if (sName == "zoantrhope_squad") then
+		return true
+	elseif (sName == "swarmlord_squad") then
+		return true
+	elseif (sName == "tyranids_wargear_upgrade_lvl_1_adrenal_glands_addon") then
+		return true
+	elseif (sName == "tyranids_wargear_upgrade_lvl_1_psy_reinforce_addon") then
+		return true
+	elseif (sName == "tyranids_wargear_upgrade_lvl_2_articulated_carapace_addon") then
+		return true
+	elseif (sName == "tyranids_wargear_upgrade_lvl_2_reinforced_synapse_link_addon") then
+		return true
+	elseif (sName == "tyranids_wargear_upgrade_lvl_3_leech_essence_addon") then
+		return true
+	elseif (sName == "tyranids_wargear_upgrade_lvl_3_swarmlord_addon") then
+		return true
+	elseif (sName == "tyranids_wargear_upgrade_01_reinforcedscyth_research_mp") then
+		return true
+	elseif (sName == "tyranids_wargear_upgrade_02_crushing_claws_research_mp") then
+		return true
+	end
+	return false
+end

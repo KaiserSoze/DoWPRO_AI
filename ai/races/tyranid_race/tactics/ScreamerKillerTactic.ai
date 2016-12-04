@@ -1,0 +1,16 @@
+----------------------------------------
+-- File: 'ScreamerKillerTactic.ai'
+-- Edited by Gambit	@ 25.09.2015
+
+class 'ScreamerKillerTactic' (TyranidInfantryTactic)
+
+function ScreamerKillerTactic:__init( squad_ai ) super( squad_ai )
+
+	self:SetName("Screamer Killer Tactic")
+end
+
+function ScreamerKillerTactic:AlwaysAttack()
+	return true
+end
+
+

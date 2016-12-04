@@ -1,0 +1,40 @@
+----------------------------------------
+-- File: 'LictorAlphaTactic.ai'
+-- Created by Gambit	@ 21.09.2015
+
+class 'LictorTactic' (TyranidInfantryTactic)
+
+Lictor = {}
+
+function LictorTactic:__init( squad_ai ) super( squad_ai )
+
+	self:SetName("Lictor Tactic")
+end
+
+
+function LictorTactic:IsAttacker()
+	return self:IsCommanderAttacker()
+end
+
+
+function LictorTactic:IsDefender()
+	return self:IsCommanderDefender()
+end
+
+
+function LictorTactic:InitAbilities()
+
+	if Lictor.iPheromoneID == nil then
+		Lictor.iPheromoneID = cpu_manager.stats:GetAbilityID( "tyranids_pheromone_trail" )	
+	end
+end
+
+
+function LictorAlphaTactic:DoAbilities()
+
+	if (self.squad_ai:CanDoAbility(Lictor.iPheromoneID) and self.squad_ai:IsInCombat()) then
+		Ability.DoAbilityTarget( self.squad_ai, Lictor.iPheromoneID, Ability.Filters.CloseInfantryEnemy, 1 )
+		Ability.DoAbilityTarget( self.squad_ai, Lictor.iPheromoneID, Ability.Filters.CloseCommanderEnemy, 1 )
+		Ability.DoAbilityTarget( self.squad_ai, Lictor.iPheromoneID, Ability.Filters.CloseMonsterEnemy, 1 )
+	end
+end

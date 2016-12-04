@@ -261,7 +261,7 @@ BuildBaseStrategyInfo =
 			standard =
 			{
 				sisters_squad_sentinel = 2,
-				sisters_squad_adeptus_arbites_melee = 2,
+				sisters_squad_adeptus_arbites_melee = math.random( 2,4 ),
 				sisters_squad_hospitaller = 2,
 				sisters_squad_battle_sister = math.random( 2,4 ),
 				sisters_squad_seraphim = 2,

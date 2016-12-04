@@ -482,10 +482,6 @@ function GuardBuildBaseStrategy:RelicRequired(sName)
 		return true
 	elseif (sName == "guard_wargear_upgrade_02_power_fist_research_mp") then
 		return true
-	--elseif (sName == "guard_wargear_upgrade_03_storm_bolter_research_mp") then
-	--	return true
-	--elseif (sName == "guard_wargear_upgrade_04_plasma_pistol_research_mp") then
-	--	return true
 	end
 	return false
 end

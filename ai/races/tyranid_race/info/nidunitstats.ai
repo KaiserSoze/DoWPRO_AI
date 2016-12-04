@@ -1,0 +1,341 @@
+-----------------------------
+-- File: 'tyranidunitstats.ai'
+-- Created by Thudmeizer @ 01.11.2007
+
+
+UnitStrengths.auto_builder_squad = 0
+UnitStrengths.genestealer_squad = 45
+UnitStrengths.hormagaunt_squad = 30
+UnitStrengths.termagaunt_squad = 30
+UnitStrengths.spinegaunt_squad = 30
+UnitStrengths.ravener_squad = 45
+UnitStrengths.warrior_brood_squad = 50
+UnitStrengths.hive_tyrant_squad = 300
+UnitStrengths.lictor_squad = 200
+UnitStrengths.tyrant_guard_squad = 400
+UnitStrengths.tyrant_guard_shielded_squad = 400
+UnitStrengths.carnifex_squad = 280
+UnitStrengths.carnifex_screamer_killer_squad = 300
+UnitStrengths.zoanthrope_squad = 300
+UnitStrengths.biovore_squad = 300
+UnitStrengths.ripper_squad = 35
+UnitStrengths.spore_mine_squad = 45
+UnitStrengths.swarmlord_squad = 300
+
+
+TyranidUnitStats =
+{
+	race = "tyranid_race",
+	{
+		name = "Hive Mind",
+		sbp_name = "auto_builder_squad",
+		ebp_name = "auto_builder",
+		class = UnitStatsAI.UC_LightInfantryLow,
+		rating = 0,
+		potential =
+		{
+			{
+				name = "none",
+				effectiveness = GenerateUnitEffectiveness(0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0),
+				range = UnitStatsAI.RT_None,
+			},
+		}
+	},
+	{
+		name = "Genestealers",
+		sbp_name = "genestealer_squad",
+		ebp_name = "genestealer",
+		class = UnitStatsAI.UC_LightInfantryHigh,
+		rating = 3,
+		potential =
+		{
+			{
+				name = "tyranids_genestealer_rending_claws",
+				effectiveness = GenerateUnitEffectiveness(3.9,5.0,4.3,3.9,3.3,3.3,3.3,3.3,3.3,3.3,3.3,3.3,3.3,3.3,0.0,0.0,0.0),
+				range = UnitStatsAI.RT_Melee,
+
+			},
+		}
+	},
+	{
+		name = "Ripper Brood",
+		sbp_name = "ripper_squad",
+		ebp_name = "ripper",
+		class = UnitStatsAI.UC_LightInfantryLow,
+		rating = 2,
+		potential =
+		{
+			{
+				name = "tyranids_ripper_melee",
+				effectiveness = GenerateUnitEffectiveness(5.6,5.9,5.6,5.4,5.0,4.8,3.7,0.6,5.0,0.5,4.5,4.3,3.1,0.6,0.0,0.0,0.0),
+				range = UnitStatsAI.RT_Melee,
+			},
+		}
+	},
+	{
+		name = "Spore Mines",
+		sbp_name = "spore_mine_squad",
+		ebp_name = "spore_mine",
+		class = UnitStatsAI.UC_VehicleLow,
+		rating = 2,
+		potential =
+		{
+			{
+				name = "none",
+				effectiveness = GenerateUnitEffectiveness(0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0),
+				range = UnitStatsAI.RT_None,
+			},
+		}
+	},
+	{
+		name = "Hormagaunt Brood",
+		sbp_name = "hormagaunt_squad",
+		ebp_name = "hormagaunt",
+		class = UnitStatsAI.UC_LightInfantryMed,
+		rating = 4,
+		potential =
+		{
+			{
+				name = "tyranids_hormagaunt_scything_talons",
+				effectiveness = GenerateUnitEffectiveness(5.6,5.9,5.6,5.4,5.0,4.8,3.7,0.6,5.0,0.5,4.5,4.3,3.1,0.6,0.0,0.0,0.0),
+				range = UnitStatsAI.RT_Melee,
+			},
+		}
+	},
+	{
+		name = "Tergamagaunt Brood",
+		sbp_name = "termagaunt_squad",
+		ebp_name = "termagaunt",
+		class = UnitStatsAI.UC_LightInfantryMed,
+		rating = 4,
+		potential =
+		{
+			{
+				name = "tyranids_termagaunt_devourer",
+				effectiveness = GenerateUnitEffectiveness(6.7,6.7,6.7,6.7,6.0,5.6,5.3,3.8,6.0,3.8,5.6,2.8,1.6,0.0,0.0,0.0,0.0),
+				range = UnitStatsAI.RT_Ranged,
+			},
+		}
+	},
+	{
+		name = "Spinegaunt Brood",
+		sbp_name = "spinegaunt_squad",
+		ebp_name = "spinegaunt",
+		class = UnitStatsAI.UC_LightInfantryMed,
+		rating = 4,
+		potential =
+		{
+			{
+				name = "tyranids_spinefists",
+				effectiveness = GenerateUnitEffectiveness(4,5,3,1,0.5,0.2,0.2,0.1,3.5,1,1,0.5,0.4,0.2,0.0,0.0,0.0),
+				range = UnitStatsAI.RT_Ranged,
+			},
+		}
+	},
+	{
+		name = "Tyrant Guard",
+		sbp_name = "tyrant_guard_squad",
+		ebp_name = "tyrant_guard",
+		class = UnitStatsAI.UC_HeavyInfantryHigh,
+		rating = 7,
+		potential =
+		{
+			{
+				name = "tyranids_tyrant_guard_melee",
+				effectiveness = GenerateUnitEffectiveness(6.7,6.7,6.7,6.7,6.0,5.6,5.3,3.8,6.0,3.8,5.6,2.8,1.6,0.0,0.0,0.0,0.0),
+				range = UnitStatsAI.RT_Melee,
+			},
+		}
+	},
+	{
+		name = "Tyrant Guard",		-- Shielded Version
+		sbp_name = "tyrant_guard_shielded_squad",
+		ebp_name = "tyrant_guard_shielded",
+		class = UnitStatsAI.UC_VehicleHigh,
+		rating = 7,
+		potential =
+		{
+			{
+				name = "tyranids_tyrant_guard_melee",
+				effectiveness = GenerateUnitEffectiveness(0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0),
+				range = UnitStatsAI.RT_Melee,
+			},
+		}
+	},
+	{
+		name = "Zoanthrope",
+		sbp_name = "Zoanthrope_squad",
+		ebp_name = "Zoanthrope",
+		class = UnitStatsAI.UC_VehicleMed,
+		rating = 7,
+		potential =
+		{
+			{
+				name = "tyranids_zoanthrope_cannon",
+				effectiveness = GenerateUnitEffectiveness(5,5,6,6.5,7,2,2,2,6,7.5,8,1,1,1,0.0,0.0,0.0),
+				range = UnitStatsAI.RT_Ranged,
+			},
+		}
+	},
+	{
+		name = "Biovore Brood",
+		sbp_name = "biovore_squad",
+		ebp_name = "biovore",
+		class = UnitStatsAI.UC_VehicleMed,
+		rating = 6,
+		potential =
+		{
+			{
+				name = "tyranids_biovore_fragmental",
+				effectiveness = GenerateUnitEffectiveness(8.6,8.8,8.6,8.4,8.8,7.3,6.3,4.7,6.8,0.0,6.3,5.9,5.4,3.6,0.0,0.0,0.0),
+				range = UnitStatsAI.RT_Ranged,
+			},
+			{
+				name = "tyranids_biovore_bio_acid",
+				effectiveness = GenerateUnitEffectiveness(8.4,8.1,7.7,8.3,7.2,8.8,8.6,7.7,8.3,7.7,6.1,7.7,7.4,7.7,0.0,0.0,0.0),
+				range = UnitStatsAI.RT_Ranged,
+			},
+		}
+	},
+	{
+		name = "Ravener Brood",
+		sbp_name = "ravener_squad",
+		ebp_name = "ravener",
+		class = UnitStatsAI.UC_HeavyInfantryMed,
+		rating = 4,
+		potential =
+		{
+			{
+				name = "tyranids_ravener_scything_talons",
+				effectiveness = GenerateUnitEffectiveness(6.5,6.9,6.5,6.4,5.9,5.7,4.6,3.9,5.9,3.9,5.4,5.1,3.9,3.9,0.0,0.0,0.0),
+				range = UnitStatsAI.RT_Melee,
+			},
+			{
+				name = "tyranids_ravener_devourer",
+				effectiveness = GenerateUnitEffectiveness(5.1,6.3,6.0,5.8,5.4,4.5,4.5,2.4,5.4,3.4,4.8,4.5,4.5,3.4,0.0,0.0,0.0),
+				range = UnitStatsAI.RT_Ranged,
+			},
+		}
+	},
+	{
+		name = "Warrior Brood",
+		sbp_name = "warrior_brood_squad",
+		ebp_name = "warrior_brood",
+		class = UnitStatsAI.UC_HeavyInfantryMed,
+		rating = 5,
+		potential =
+		{
+			{
+				name = "tyranids_warrior_venom_cannon",
+				effectiveness = GenerateUnitEffectiveness(6.5,6.1,5.9,5.9,5.7,3.4,2.4,0.0,5.4,0.0,4.2,4.3,2.6,1.9,0.0,0.0,0.0),
+				range = UnitStatsAI.RT_Ranged,
+			},
+			{
+				name = "tyranids_warrior_devourer",
+				effectiveness = GenerateUnitEffectiveness(6.1,5.1,5.1,5.3,7.1,4.9,3.8,2.2,7.1,2.2,6.5,0.0,4.1,3.2,0.0,0.0,0.0),
+				range = UnitStatsAI.RT_Ranged,
+			},
+			{
+				name = "tyranids_warrior_brood_scything_talons",
+				effectiveness = GenerateUnitEffectiveness(8.4,8.1,7.7,8.3,7.2,8.8,8.6,7.7,8.3,7.7,6.1,7.7,7.4,7.7,0.0,0.0,0.0),
+				range = UnitStatsAI.RT_Melee,
+			},
+		}
+	},
+	{
+		name = "Carnifex Screamer Killer",
+		sbp_name = "carnifex_screamer_killer_squad",
+		ebp_name = "carnifex_screamer_killer",
+		class = UnitStatsAI.UC_MonsterLow,
+		rating = 3,
+		potential =
+		{
+			{
+				name = "tyranids_carnifex_crushing_claws",
+				effectiveness = GenerateUnitEffectiveness(8.6,8.8,8.6,8.4,8.8,7.3,6.3,4.7,6.8,0.0,6.3,5.9,5.4,3.6,0.0,0.0,0.0),
+				range = UnitStatsAI.RT_Melee,
+
+			},
+		}
+	},
+	{
+		name = "Carnifex",
+		sbp_name = "Carnifex_squad",
+		ebp_name = "Carnifex",
+		class = UnitStatsAI.UC_MonsterMed,
+		rating = 6,
+		potential =
+		{
+			{
+				name = "tyranids_carnifex_venom_cannon",
+				effectiveness = GenerateUnitEffectiveness(6.5,6.1,5.9,5.9,5.7,3.4,2.4,0.0,5.4,0.0,4.2,4.3,2.6,1.9,0.0,0.0,0.0),
+				range = UnitStatsAI.RT_Ranged,
+			},
+			{
+				name = "tyranids_carnifex_devourer",
+				effectiveness = GenerateUnitEffectiveness(6.1,5.1,5.1,5.3,7.1,4.9,3.8,2.2,7.1,2.2,6.5,0.0,4.1,3.2,0.0,0.0,0.0),
+				range = UnitStatsAI.RT_Ranged,
+			},
+			{
+				name = "tyranids_carnifex_upper_claws",
+				effectiveness = GenerateUnitEffectiveness(7.5,7.6,7.6,7.6,8.6,8.5,8.5,8.5,5.6,5.6,5.3,7.5,6.5,5.1,0.0,0.0,0.0),
+				range = UnitStatsAI.RT_Melee,
+			},
+		}
+	},
+	{
+		name = "Lictor",
+		sbp_name = "lictor_squad",
+		ebp_name = "lictor",
+		class = UnitStatsAI.UC_HeavyInfantryMed,
+		rating = 7,
+		potential =
+		{
+			{
+				name = "tyranids_lictor_melee",
+				effectiveness = GenerateUnitEffectiveness(6,5.8,5.5,5.3,5,4.0,3.0,2.0,5,2.0,7,4,2,1.0,0.0,0.0,0.0),
+				range = UnitStatsAI.RT_Melee,
+			},
+		}
+	},
+	{
+		name = "Hive Tyrant",
+		sbp_name = "hive_tyrant_squad",
+		ebp_name = "hive_tyrant",
+		class = UnitStatsAI.UC_Commander,
+		rating = 7,
+		potential =
+		{
+			{
+				name = "tyranids_hive_tyrant_scything_talons",
+				effectiveness = GenerateUnitEffectiveness(6.2,7.8,7.8,7.8,7.8,6.2,5.9,8.3,6.2,8.3,6.7,6.7,6.5,5.5,0.0,0.0,0.0),
+				range = UnitStatsAI.RT_Melee,
+			},
+			{
+				name = "tyranids_hive_tyrant_venom_cannon",
+				effectiveness = GenerateUnitEffectiveness(6.5,6.1,5.9,5.9,5.7,3.4,2.4,0.0,5.4,0.0,4.2,4.3,2.6,1.9,0.0,0.0,0.0),
+				range = UnitStatsAI.RT_Ranged,
+			},
+			{
+				name = "tyranids_hive_tyrant_devourer",
+				effectiveness = GenerateUnitEffectiveness(6.1,5.1,5.1,5.3,7.1,4.9,3.8,2.2,7.1,2.2,6.5,0.0,4.1,3.2,0.0,0.0,0.0),
+				range = UnitStatsAI.RT_Ranged,
+			},
+		}
+	},
+	{
+		name = "Swarmlord",
+		sbp_name = "swarmlord_squad",
+		ebp_name = "swarmlord",
+		class = UnitStatsAI.UC_Commander,
+		rating = 10,
+		potential =
+		{
+			{
+				name = "tyranids_swarmlord_swords",
+				effectiveness = GenerateUnitEffectiveness(10.0,10.0,10.0,10.0,10.0,10.0,10.0,10.0,10.0,10.0,10.0,10.0,10.0,10.0,0.0,0.0,0.0),
+				range = UnitStatsAI.RT_Melee,
+			},
+		}
+	},
+}

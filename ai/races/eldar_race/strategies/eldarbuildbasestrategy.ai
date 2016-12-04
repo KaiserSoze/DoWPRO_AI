@@ -400,10 +400,6 @@ function EldarBuildBaseStrategy:RelicRequired(sName)
 		return true
 	elseif (sName == "eldar_wargear_upgrade_02_singing_spear_research_mp") then
 		return true
-	--elseif (sName == "eldar_wargear_upgrade_03_shuriken_pistol_research_mp") then
-	--	return true
-	--elseif (sName == "eldar_wargear_upgrade_04_twin_shuriken_pistol_research_mp") then
-	--	return true
 	end
 	return false
 end

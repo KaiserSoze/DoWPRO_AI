@@ -344,6 +344,7 @@ function DarkEldarBuildBaseStrategy:BuildFlexible()
 		-- Compute commander researches
 		self:DynamicResearch("dark_eldar_upgrade_commander_health_2", 3, 100, 80, 6, 6, nil, 0)
 		self:DynamicResearch("dark_eldar_wargear_upgrade_02_agonizer", 3, 120, 80, 6, 6, "dark_eldar_squad_archon", 1)		-- Agonizer & disintegrator
+		self:DynamicResearch("dark_eldar_soulstorm_research", 3, 250, 200, 6, 6, nil, 0)
 	end
 	
 	-- DynamicAddon(sAddonName, iAddonCount, iMinTier, iRequisitionCost, iPowerCost, iMinSquadCap, iMinSupportCap, sSquadName, iSquadMinCount)

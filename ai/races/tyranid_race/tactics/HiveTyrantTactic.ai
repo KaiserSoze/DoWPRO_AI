@@ -1,0 +1,79 @@
+----------------------------------------
+-- File: 'HiveTyrantTactic.ai'
+-- Edited by Hive Mind @ 05.12.2012
+
+class 'HiveTyrantTactic' (TyranidInfantryTactic)
+
+HiveTyrant = {}
+
+function HiveTyrantTactic:__init( squad_ai ) super( squad_ai )
+
+	self:SetName("Hive Tyrant Tactic")
+end
+
+
+-- Assassinate win condition -- never attack
+function HiveTyrantTactic:IsAttacker()	
+	return (not cpu_manager.assassinate and self:IsCommanderAttacker())
+end
+
+
+-- Assassinate win condition -- never defend
+function HiveTyrantTactic:IsDefender()
+	return (not cpu_manager.assassinate and self:IsCommanderDefender())
+end
+
+
+function HiveTyrantTactic:InitAbilities()
+
+	if HiveTyrant.iTyrantScreamID == nil then
+		HiveTyrant.iTyrantScreamID = cpu_manager.stats:GetAbilityID( "tyranids_scream" )
+	end
+end
+
+
+function HiveTyrantTactic:DoAbilities()
+	
+	-- If we are dying, lower prerequisites
+	if (self.squad_ai:WasRecentlyHurt() and self.squad_ai:GetHealthPercentage() < 0.75) then
+		Ability.DoAbilityTarget( self.squad_ai, HiveTyrant.iTyrantScreamID, Ability.Filters.CloseInfantryEnemy, 4 )
+		Ability.DoAbilityTarget( self.squad_ai, HiveTyrant.iTyrantScreamID, Ability.Filters.CloseMonsterEnemy, 2 )
+	else
+		Ability.DoAbilityTarget( self.squad_ai, HiveTyrant.iTyrantScreamID, Ability.Filters.CloseInfantryEnemy, 8 )
+	end
+
+	if (self.squad_ai:CanDoAbility(HiveTyrant.iTyrantParoxysmID) and self.squad_ai:IsInCombat()) then
+		Ability.DoAbilityTarget( self.squad_ai, HiveTyrant.iTyrantParoxysmID, Ability.Filters.CloseInfantryEnemy, 4 )
+	end
+end
+
+
+function HiveTyrantTactic:Upgrade()
+
+	-- Check if we have free resources
+	if (not Tactic.Options.can_reinforce) then
+		return
+	end
+	
+	if (not self.squad_ai:IsReinforcing()) then
+	
+		-- Upgrade if possible
+		if (self.squad_ai:HasUpgradableTrooper() and self.squad_ai:GetNumTroopers() > 0) then
+			local class_type = cpu_manager:GetFirstEnemyPlayer():GetMajorityClassType()
+			self.squad_ai:DoBestUpgrade( class_type )
+		end
+	end
+end
+
+
+function HiveTyrantTactic:Update()
+
+	if (self:IsComplete()) then
+		return
+	end
+	
+	-- State machine
+	if (not InfantryTactic.Update(self)) then
+		return
+	end
+end

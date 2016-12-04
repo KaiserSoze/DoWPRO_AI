@@ -1,0 +1,128 @@
+----------------------------------------
+-- File: 'nidloader.ai'
+-- Edited by Thudmeizer   @ 28.11.2007
+
+class 'tyranid_race'
+
+-- Constructor
+function tyranid_race:__init()
+
+end
+
+-- Returns the name of the race
+function tyranid_race:GetRaceName()
+	return "tyranid_race"
+end
+
+-- This function is called if tyranids are the race being played
+function tyranid_race:LoadRace( eDifficulty )
+
+	-- Import strategies
+	import( 'Races/tyranid_race/Strategies/NidBuildBaseStrategy.ai' )
+	
+	-- Import strategy info
+	import( "Races/tyranid_race/Strategies/NidStrategyInfo.ai" )
+		
+	-- Import tactics
+	import( 'Races/tyranid_race/Tactics/TyranidInfantryTactic.ai' )
+	import( 'Races/tyranid_race/Tactics/HiveMindTactic.ai' )
+	import( 'Races/tyranid_race/Tactics/HiveTyrantTactic.ai' )
+	import( 'Races/tyranid_race/Tactics/LictorTactic.ai' )
+	import( 'Races/tyranid_race/Tactics/RavenerTactic.ai' )
+	import( 'Races/tyranid_race/Tactics/ScreamerKillerTactic.ai' )
+	return true
+end
+
+
+-- This function is called even if tyranid are not the race being played
+function tyranid_race:LoadGlobalInfo()
+
+	-- Import info files
+	import( 'Races/tyranid_race/Info/nidunitstats.ai' )
+	
+	-- Add Tyranid unit stats
+	table.insert(UnitStats, TyranidUnitStats)
+	return true
+end
+
+-- Creates build base strategy
+function tyranid_race:CreateBuildBaseStrategy()
+	return TyranidBuildBaseStrategy(BuildBaseStrategyInfo)
+end
+
+-- Creates a special tactic for a tyranid unit
+function tyranid_race:CreateTactic(oSquadAI)
+
+	-- Get unit name and class
+	local sUnitName = oSquadAI:GetSquadName()
+	local eClass = oSquadAI:GetStats():GetClass()
+	
+	-- Check if there is a special tactic for the unit available
+	if (sUnitName == "hive_tyrant_squad") then
+		return HiveTyrantTactic(oSquadAI)
+	elseif (sUnitName == "lictor_squad") then
+		return LictorTactic(oSquadAI)
+	elseif (sUnitName == "ravener_squad") then
+		return RavenerTactic(oSquadAI)
+	elseif (sUnitName == "carnifex_screamer_killer_squad") then
+		return ScreamerKillerTactic(oSquadAI)
+	elseif (oSquadAI:IsEngineer()) then
+		return HiveMindTactic(oSquadAI)
+	return TyranidInfantryTactic(oSquadAI)
+end
+
+-- Creates a base tactic
+function tyranid_race:CreateBaseTactic(oBuilding)
+	return nil
+end
+
+-- Returns a specific information
+function tyranid_race:GetInfo(sType)
+
+	-- Check info type
+	if (sType == "TurretPower") then
+		return 350
+	elseif (sType == "SupportAllyFactor") then
+		return 7 / 4
+	elseif (sType == "AttackModifier") then
+		return 10
+	elseif (sType == "CriticalRangeIncreasePerTier") then
+		return 10
+	elseif (sType == "MinArmyStrengthPerTier") then
+		return 600
+	elseif (sType == "AttackRatio") then
+		return 4 / 5
+	elseif (sType == "RetreatRatio") then
+		return 3 / 5
+	elseif (sType == "HarassingLeader") then
+		return "hive_tyrant_squad"
+	elseif (sType == "AutoConstructBuildings") then
+		return true
+	end
+	return nil
+end
+
+-- Returns the building type and threat
+function tyranid_race:GetBuildingType(sBuildingName)
+
+	-- Return race specific object string
+	if (sBuildingName == "tyranids_hq") then
+		return "HQ", 250
+
+	elseif (sBuildingName == "tyranids_generator") then
+		return "Generator", 0
+
+	elseif (sBuildingName == "tyranids_big_generator") then
+		return "BiggerGenerator", 0
+
+	elseif (sBuildingName == "tyranids_capillary_vein") then
+		return "VehicleBuilding", 250
+
+	elseif (sBuildingName == "tyranids_capillary_tower") then
+		return "Armoury", 250
+		
+	elseif (sBuildingName == "tyranids_listening_post") then
+		return "ListeningPost", 0
+    end
+	return nil, 0
+end

@@ -1,0 +1,26 @@
+----------------------------------------
+-- File: 'HiveMindTactic.ai'
+-- Edited by Thudmeizer @ 12.12.2006
+
+class 'HiveMindTactic' (EngineerTactic)
+
+function HiveMindTactic:__init( squad_ai ) super( squad_ai )
+
+	self:SetName("Hive Mind Tactic")
+end
+
+function HiveMindTactic:CanRepair()
+	return false
+end
+
+function HiveMindTactic:IsAffectedByMorale()
+	return false
+end
+
+--[[function HiveMindTactic:Update()
+
+	--state machine
+	if not EngineerTactic.Update( self ) then
+		return
+	end
+end]]
