@@ -4,7 +4,7 @@
 
 class 'TyranidBuildBaseStrategy' (BuildBaseStrategy)
 
-function MarineBuildBaseStrategy:__init( baseinfo ) super( baseinfo )
+function TyranidBuildBaseStrategy:__init( baseinfo ) super( baseinfo )
 
 	-- Add build items that can cause an "invalid addon" console message
 	CpuPrerequisites2.AddSpecialItem("tyranids_wargear_upgrade_lvl_1_adrenal_glands_addon", CpuPrerequisites.BT_AddOn)
@@ -188,6 +188,7 @@ function TyranidBuildBaseStrategy:BuildFlexible()
 	local num_genestealer_squads = self:CountSquads("genestealer_squad")
 	local num_ravener_squads =  self:CountSquads("ravener_squad")
 	local num_warrior_squads =  self:CountSquads("warrior_brood_squad")
+	local num_lictor_squads =  self:CountSquads("lictor_squad")
 	local num_carnifex_squads = self:CountSquads("carnifex_screamer_killer_squad")+ self:CountSquads("carnifex_squad")
 
         -- Item-Syntax: ResearchName, MinTier, RequisitionCost, PowerCost, MinSquadCap, MinSupportCap, SquadName, SquadMinCount

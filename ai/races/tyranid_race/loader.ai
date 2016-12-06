@@ -1,6 +1,7 @@
 ----------------------------------------
--- File: 'nidloader.ai'
--- Edited by Thudmeizer   @ 28.11.2007
+-- File: 'loader.ai'
+-- Edited by Thudmeizer	@ 01.10.2008
+-- Edited by Kaiser Soze @ 21.06.2016
 
 class 'tyranid_race'
 
@@ -14,29 +15,54 @@ function tyranid_race:GetRaceName()
 	return "tyranid_race"
 end
 
--- This function is called if tyranids are the race being played
+-- This function is called if the race is being played
 function tyranid_race:LoadRace( eDifficulty )
-
+	
 	-- Import strategies
-	import( 'Races/tyranid_race/Strategies/NidBuildBaseStrategy.ai' )
+	import( 'Races/tyranid_race/Strategies/nidbuildbasestrategy.ai' )
 	
 	-- Import strategy info
-	import( "Races/tyranid_race/Strategies/NidStrategyInfo.ai" )
-		
+	import( "Races/tyranid_race/Strategies/nidstrategyinfo.ai" )
+	
 	-- Import tactics
 	import( 'Races/tyranid_race/Tactics/TyranidInfantryTactic.ai' )
 	import( 'Races/tyranid_race/Tactics/HiveMindTactic.ai' )
 	import( 'Races/tyranid_race/Tactics/HiveTyrantTactic.ai' )
-	import( 'Races/tyranid_race/Tactics/LictorTactic.ai' )
+ 	import( 'Races/tyranid_race/Tactics/LictorTactic.ai' )
 	import( 'Races/tyranid_race/Tactics/RavenerTactic.ai' )
-	import( 'Races/tyranid_race/Tactics/ScreamerKillerTactic.ai' )
+    import( 'Races/tyranid_race/Tactics/ScreamerKillerTactic.ai' )
+	import( 'Races/tyranid_race/Tactics/SporeMineTactic.ai' )
+
+	
+
+	--Prepare unit rating, this will be used intead of rating for our units (not for the enemy units!!!)
+	--If a unit is not listed here it will use the default rating
+	unitStatsUpdater:AddSquadRating ( "auto_builder_squad" , 0)
+	unitStatsUpdater:AddSquadRating ( "genestealer_squad" , 3)
+	unitStatsUpdater:AddSquadRating ( "hormagaunt_squad" , 2)
+	unitStatsUpdater:AddSquadRating ( "termagaunt_squad" , 2)
+	unitStatsUpdater:AddSquadRating ( "spinegaunt_squad" , 2)
+	unitStatsUpdater:AddSquadRating ( "ravener_squad" , 3)
+	unitStatsUpdater:AddSquadRating ( "warrior_brood_squad" , 5)
+	unitStatsUpdater:AddSquadRating ( "hive_tyrant_squad" , 7)
+	unitStatsUpdater:AddSquadRating ( "lictor_squad" , 6)
+	unitStatsUpdater:AddSquadRating ( "tyrant_guard_squad" , 7)
+	unitStatsUpdater:AddSquadRating ( "tyrant_guard_shielded_squad" , 7)
+	unitStatsUpdater:AddSquadRating ( "carnifex_squad" , 7)
+	unitStatsUpdater:AddSquadRating ( "carnifex_screamer_killer_squad" , 7)
+	unitStatsUpdater:AddSquadRating ( "zoanthrope_squad" , 7)
+	unitStatsUpdater:AddSquadRating ( "biovore_squad" , 6)
+	unitStatsUpdater:AddSquadRating ( "ripper_squad" , 3)
+	unitStatsUpdater:AddSquadRating ( "spore_mine_squad" , 4)
+	unitStatsUpdater:AddSquadRating ( "swarmlord_squad" , 7)	
+	
+	
 	return true
 end
 
-
--- This function is called even if tyranid are not the race being played
+-- This function is called even if this race are not the race being played
 function tyranid_race:LoadGlobalInfo()
-
+		
 	-- Import info files
 	import( 'Races/tyranid_race/Info/nidunitstats.ai' )
 	
@@ -50,7 +76,7 @@ function tyranid_race:CreateBuildBaseStrategy()
 	return TyranidBuildBaseStrategy(BuildBaseStrategyInfo)
 end
 
--- Creates a special tactic for a tyranid unit
+-- Creates a special tactic for a unit
 function tyranid_race:CreateTactic(oSquadAI)
 
 	-- Get unit name and class
@@ -58,7 +84,11 @@ function tyranid_race:CreateTactic(oSquadAI)
 	local eClass = oSquadAI:GetStats():GetClass()
 	
 	-- Check if there is a special tactic for the unit available
-	if (sUnitName == "hive_tyrant_squad") then
+	if (sUnitName == "auto_builder_squad") then
+		return HiveMindTactic(oSquadAI)
+	elseif (sUnitName == "tyrant_guard_squad") then
+		return HiveTyrantTactic(oSquadAI)
+	elseif (sUnitName == "tyrant_guard_shielded_squad") then
 		return HiveTyrantTactic(oSquadAI)
 	elseif (sUnitName == "lictor_squad") then
 		return LictorTactic(oSquadAI)
@@ -66,10 +96,14 @@ function tyranid_race:CreateTactic(oSquadAI)
 		return RavenerTactic(oSquadAI)
 	elseif (sUnitName == "carnifex_screamer_killer_squad") then
 		return ScreamerKillerTactic(oSquadAI)
+	elseif (sUnitName == "spore_mine_squad") then
+		return SporeMineTactic(oSquadAI)
 	elseif (oSquadAI:IsEngineer()) then
 		return HiveMindTactic(oSquadAI)
+	end
 	return TyranidInfantryTactic(oSquadAI)
 end
+
 
 -- Creates a base tactic
 function tyranid_race:CreateBaseTactic(oBuilding)

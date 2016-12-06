@@ -32,8 +32,10 @@ function RaceLoader:AddRaces()
         if (not bLoadedThisRace) then
             pcall(import ,'Races/' .. sRace .. '/Loader.ai')
             if (_G[sRace] ~= nil) then
+				print ("RaceLoader: Imported race:"..sRace)
                 table.insert(self.m_aRaceAIRepository, _G[sRace]())
             else
+				print ("RaceLoader: Fail to imported race:"..sRace.." using null race instead")
                 table.insert(self.m_aRaceAIRepository, null_race(sRace))
             end
             table.insert(aLoadedAis, sRace)

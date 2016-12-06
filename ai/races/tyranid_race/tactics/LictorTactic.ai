@@ -1,6 +1,7 @@
 ----------------------------------------
 -- File: 'LictorAlphaTactic.ai'
 -- Created by Gambit	@ 21.09.2015
+-- Edited by Kaiser Soze @ 21.06.2016
 
 class 'LictorTactic' (TyranidInfantryTactic)
 
@@ -30,7 +31,7 @@ function LictorTactic:InitAbilities()
 end
 
 
-function LictorAlphaTactic:DoAbilities()
+function LictorTactic:DoAbilities()
 
 	if (self.squad_ai:CanDoAbility(Lictor.iPheromoneID) and self.squad_ai:IsInCombat()) then
 		Ability.DoAbilityTarget( self.squad_ai, Lictor.iPheromoneID, Ability.Filters.CloseInfantryEnemy, 1 )
@@ -38,3 +39,4 @@ function LictorAlphaTactic:DoAbilities()
 		Ability.DoAbilityTarget( self.squad_ai, Lictor.iPheromoneID, Ability.Filters.CloseMonsterEnemy, 1 )
 	end
 end
+

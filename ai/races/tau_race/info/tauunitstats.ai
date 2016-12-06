@@ -261,7 +261,7 @@ TauUnitStats =
 		name = "tau_greater_knarloc",
 		sbp_name = "tau_greater_knarloc_squad",
 		ebp_name = "tau_greater_knarloc",
-		class = UnitStatsAI.UC_MonsterHigh,
+		class = UnitStatsAI.UC_MonsterMed,
 		rating = 9,
 		potential =
 		{

@@ -1,6 +1,7 @@
 -----------------------------
--- File: 'tyranidunitstats.ai'
+-- File: 'nidunitstats.ai'
 -- Created by Thudmeizer @ 01.11.2007
+-- Edited by Kaiser Soze @ 21.06.2016
 
 
 UnitStrengths.auto_builder_squad = 0
@@ -246,7 +247,7 @@ TyranidUnitStats =
 		name = "Carnifex Screamer Killer",
 		sbp_name = "carnifex_screamer_killer_squad",
 		ebp_name = "carnifex_screamer_killer",
-		class = UnitStatsAI.UC_MonsterLow,
+		class = UnitStatsAI.UC_MonsterMed,
 		rating = 3,
 		potential =
 		{

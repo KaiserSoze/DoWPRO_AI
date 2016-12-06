@@ -102,7 +102,7 @@ BuildOrderStrategyInfo =
 {
 	tyranid_race =
 	{
-	        Basic =
+	       -- Basic =
 		{
 			{ "flag_capture" }, { "flag_capture" },
 			{ "squad", "genestealer_squad" },
@@ -111,7 +111,7 @@ BuildOrderStrategyInfo =
 			{ "building", "tyranids_brood_nest", true }
 		},
 		 
-		QuickStart =
+		--QuickStart =
 		{
 			{ "flag_capture" }, { "flag_capture" },
 			{ "flag_capture" },
@@ -123,7 +123,7 @@ BuildOrderStrategyInfo =
 			{ "building", "tyranids_capillary_tower", true }
 		},
 		 
-		LargeMap =
+		--LargeMap =
 		{
 			{ "flag_capture" }, { "flag_capture" },
 			{ "flag_capture" },

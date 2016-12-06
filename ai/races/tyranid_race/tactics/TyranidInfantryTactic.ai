@@ -2,6 +2,7 @@
 -- File: 'tyranidinfantrytactic.ai'
 -- Created by Thudmeizer @ 05.01.2008
 -- Updated by Gambit	 @ 25.09.2015
+-- Edited by Kaiser Soze @ 21.06.2016
 
 class 'TyranidInfantryTactic' (InfantryTactic)
 
