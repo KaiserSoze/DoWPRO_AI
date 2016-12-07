@@ -1,7 +1,7 @@
 ----------------------------------------
 -- File: 'LictorAlphaTactic.ai'
 -- Created by Gambit	@ 21.09.2015
--- Edited by Kaiser Soze @ 21.06.2016
+-- Edited by Kaiser Soze @ 12.06.2016
 
 class 'LictorTactic' (TyranidInfantryTactic)
 

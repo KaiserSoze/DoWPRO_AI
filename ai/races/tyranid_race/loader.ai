@@ -29,6 +29,7 @@ function tyranid_race:LoadRace( eDifficulty )
 	import( 'Races/tyranid_race/Tactics/HiveMindTactic.ai' )
 	import( 'Races/tyranid_race/Tactics/HiveTyrantTactic.ai' )
  	import( 'Races/tyranid_race/Tactics/LictorTactic.ai' )
+	import( 'Races/tyranid_race/Tactics/GenestealerTactic.ai' )
 	import( 'Races/tyranid_race/Tactics/RavenerTactic.ai' )
     import( 'Races/tyranid_race/Tactics/ScreamerKillerTactic.ai' )
 	import( 'Races/tyranid_race/Tactics/SporeMineTactic.ai' )
@@ -92,6 +93,8 @@ function tyranid_race:CreateTactic(oSquadAI)
 		return HiveTyrantTactic(oSquadAI)
 	elseif (sUnitName == "lictor_squad") then
 		return LictorTactic(oSquadAI)
+		elseif (sUnitName == "genestealer_squad") then
+		return GenestealerTactic(oSquadAI)
 	elseif (sUnitName == "ravener_squad") then
 		return RavenerTactic(oSquadAI)
 	elseif (sUnitName == "carnifex_screamer_killer_squad") then
