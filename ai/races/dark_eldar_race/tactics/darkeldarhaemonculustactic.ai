@@ -36,6 +36,8 @@ function DarkEldarHaemonculusTactic:InitAbilities()
 	--if (DarkEldarHaemonculus.stinger_id == nil) then
 	--	DarkEldarHaemonculus.stinger_id = cpu_manager.stats:GetAbilityID( "dark_eldar_stinger" )
 	--end
+    -- Init common abilities
+	DarkEldarInfantryTactic.InitAbilities(self)
 end
 
 function DarkEldarHaemonculusTactic:DoAbilities()
@@ -51,10 +53,8 @@ function DarkEldarHaemonculusTactic:DoAbilities()
 		--Ability.DoAbilityTarget( self.squad_ai, DarkEldarHaemonculus.stinger_id, Ability.Filters.CloseInfantryEnemy, 8 )		
 	end
 	
-	-- Check if I should enable/disable fleet of foot
-	if (not self.squad_ai:IsAttached()) then
-		self:DoAbilityFoF()
-	end
+	-- Compute common abilities
+	DarkEldarInfantryTactic.DoAbilities(self)
 end
 
 function DarkEldarHaemonculusTactic:Update()

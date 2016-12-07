@@ -20,6 +20,8 @@ function DarkEldarMandrakeTactic:InitAbilities()
 	if (Mandrake.infiltrate_id == nil) then
 		Mandrake.infiltrate_id = cpu_manager.stats:GetAbilityID( "ability_infiltrate_mandrake" )	
 	end
+	-- Init common abilities
+	DarkEldarInfantryTactic.InitAbilities(self)
 end
 
 function DarkEldarMandrakeTactic:DoAbilities()

@@ -28,6 +28,8 @@ function DarkEldarArchonTactic:InitAbilities()
 	--if (DarkEldarArchon.crucible_id == nil) then
 	--	DarkEldarArchon.crucible_id = cpu_manager.stats:GetAbilityID( "dark_eldar_crucible" )
 	--end
+	-- Init common abilities
+	DarkEldarInfantryTactic.InitAbilities(self)
 end
 
 function DarkEldarArchonTactic:DoAbilities()
@@ -41,10 +43,8 @@ function DarkEldarArchonTactic:DoAbilities()
 	-- Try to use haywire bomb ability
 	Ability.DoAbilityTarget(self.squad_ai, DarkEldarArchon.iHaywireBombID, Ability.Filters.CloseVehicleEnemy, 1)
 	
-	-- Check if I should enable/disable fleet of foot
-	if (not self.squad_ai:IsAttached()) then
-		self:DoAbilityFoF()
-	end
+	-- Compute common abilities
+	DarkEldarInfantryTactic.DoAbilities(self)
 end
 
 -- Assassinate win condition -- never attack

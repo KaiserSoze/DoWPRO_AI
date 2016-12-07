@@ -20,6 +20,8 @@ function DarkEldarWychTactic:InitAbilities()
 	if (DarkEldarWych.combatdrugs_id == nil) then
 		DarkEldarWych.combatdrugs_id = cpu_manager.stats:GetAbilityID( "dark_eldar_combat_drugs" )	
 	end
+	-- Init common abilities
+	DarkEldarInfantryTactic.InitAbilities(self)
 end
 
 function DarkEldarWychTactic:DoAbilities()

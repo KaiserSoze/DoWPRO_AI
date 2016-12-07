@@ -197,11 +197,11 @@ function TyranidBuildBaseStrategy:BuildFlexible()
 		self:DynamicResearch("tyranids_termagaunt_research", 1, 80, 50,  0, 0, nil, 0)
 	end
 
-	if (num_genestealer_squads > 2) then
+	if (num_genestealer_squads > 1) then
 		self:DynamicResearch("tyranids_genestealer_research", 2, 75, 75, 0, 0, nil, 0)
 	end
 
-	if (num_lictor_squads > 2) then
+	if (num_lictor_squads > 1) then
 		self:DynamicResearch("tyranids_lictor_research", 2, 125, 75, 0, 0, nil, 0)
 	end
 	
@@ -210,7 +210,7 @@ function TyranidBuildBaseStrategy:BuildFlexible()
 		self:DynamicResearch("tyranids_warrior_research2", 3, 180, 150, 0, 0, nil, 0)
 	end
 
-	if (num_ravener_squads >= 2) then
+	if (num_ravener_squads >= 1) then
 		self:DynamicResearch("tyranids_ravener_research", 1, 80, 50, 0, 0, nil, 0)
 	end
 

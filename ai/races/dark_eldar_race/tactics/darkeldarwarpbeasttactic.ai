@@ -20,6 +20,8 @@ function DarkEldarWarpBeastTactic:InitAbilities()
 	if (DarkEldarWarpBeast.tame_id == nil) then
 		DarkEldarWarpBeast.tame_id = cpu_manager.stats:GetAbilityID( "dark_eldar_tame_warp_beasts" )	
 	end
+	-- Init common abilities
+	DarkEldarInfantryTactic.InitAbilities(self)
 end
 
 function DarkEldarWarpBeastTactic:CheckForBroken()
