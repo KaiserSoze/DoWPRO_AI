@@ -14,7 +14,7 @@ BuildBaseStrategyInfo =
 		req_reserve = 100,
 		
 		--need at least this at all times
-		squad_cap_threshold = 3,
+		squad_cap_threshold = 2,
 
 		--need at least this at all times
 		support_cap_threshold = 3,
@@ -39,7 +39,7 @@ BuildBaseStrategyInfo =
 				{ 1,  0,  0, 0, 1,		"Building",		"tyranids_hq" },
 				{ 1, 200, 0, 0, 1,		"Building",		"tyranids_brood_nest" },
 				{ 1, 135, 0, 750, 1,	"Building",		"tyranids_generator" },
-				{ 1, 80, 10,  400, 1,	"Building",		"tyranids_biomass_converter" },
+				{ 1, 80, 10,  180, 1,	"Building",		"tyranids_biomass_converter" },
 				{ 1, 125, 0, 0, 1,		"Unit",			"termagaunt_squad" },
 				{ 1, 150, 0, 0, 1,		"Unit",			"hormagaunt_squad" },
 				{ 1, 220, 80, 0, 1,	    "Unit",			"hive_tyrant_squad" },
@@ -115,8 +115,8 @@ BuildOrderStrategyInfo =
 			{ "flag_capture" }, { "flag_capture" },
 			{ "squad", "genestealer_squad" },
 			{ "squad", "genestealer_squad" },
-			{ "post_builder" }, { "post_builder" },
-			{ "building", "tyranids_brood_nest", true }
+			{ "building", "tyranids_brood_nest", true },
+			{ "post_builder" } 
 		},
 		 
 		--QuickStart =
@@ -125,10 +125,10 @@ BuildOrderStrategyInfo =
 			{ "flag_capture" },
 			{ "squad", "genestealer_squad" },
 			{ "squad", "genestealer_squad" },
-			{ "post_builder" }, { "post_builder" },
 			{ "building", "tyranids_brood_nest", true },
 			{ "building", "tyranids_brood_nest", true },
-			{ "building", "tyranids_capillary_tower", true }
+			{ "building", "tyranids_capillary_tower", true },
+			{ "post_builder" }
 		},
 		 
 		--LargeMap =
@@ -137,8 +137,8 @@ BuildOrderStrategyInfo =
 			{ "flag_capture" },
 			{ "squad", "genestealer_squad" },
 			{ "squad", "genestealer_squad" },
-			{ "post_builder" }, { "post_builder" },
-			{ "building", "tyranids_brood_nest", true }
+			{ "building", "tyranids_brood_nest", true },
+			{ "post_builder" }
 		}
 	},
 }

@@ -87,6 +87,93 @@ function TyranidBuildBaseStrategy:GetBuildingName( sType )
 	return nil
 end
 
+function TyranidBuildBaseStrategy:EvaluateSquadCap()
+
+	-- Check if any post is in production
+	--local iBuildingID = cpu_manager.stats:GetBuildingID("tyranids_listening_post")
+	--if (self:PlanExists("Build Building Plan", iBuildingID)) then
+	--	return
+	--end
+    
+
+	--aitrace ("NidBuildBaseStrategy: check if more cap is needed")
+	-- Check squad and support cap
+	if (self:CheckSquadCap(150, 100) or self:CheckSupportCap(150, 100)) then
+		--aitrace ("NidBuildBaseStrategy: Need more cap")
+		local iLP_Number = 0
+		local iLP1_Number = 0
+		local iLP2_Number = 0
+		local iLP_Addon1 = cpu_manager.stats:GetAddOnID("tyranids_list_post_addon_1")
+		local iLP_Addon2 = cpu_manager.stats:GetAddOnID("tyranids_list_post_addon_2")
+
+		local oStats = cpu_manager.stats:GetPlayerStatsFromID( cpu_manager.player_id )
+		-- Check LP's for addons
+		for oBase in oStats:GetBases() do
+
+			-- Check for valid LP
+			if (oBase:IsValid() and oBase:IsListeningPost()) then
+				iLP_Number = iLP_Number +1
+				--aitrace ("NidBuildBaseStrategy Number: "..iBaseNumber)
+				--Count addons
+				-- Check for LP addon 2
+				if (oBase:HasAddOn(iLP_Addon2)) then		
+					iLP2_Number = iLP2_Number + 1
+					iLP1_Number = iLP1_Number + 1
+				
+				-- Check for LP addon 1
+				elseif (oBase:HasAddOn(iLP_Addon1)) then
+					iLP1_Number = iLP1_Number + 1
+				end			
+			end
+		end
+		aitrace("BuildController: Squad cap check" .. " # LP: "..iLP_Number.." #LP1: "..iLP1_Number.." #LP2: "..iLP2_Number)
+		
+		if iLP2_Number < iLP_Number then
+		
+			--check if there are "enough"  tyranids_biomass_converter, 2 per tier or 1 per LP, which ever is minimum.
+			-- This is to avoid the risk of and get locked waiting for biomass for ever.
+			local iTargetConverters = 0
+			if ( (self.tierLevel * 2 )< iLP_Number ) then
+				iTargetConverters = self.tierLevel * 2
+			else
+				iTargetConverters = iLP_Number
+			end
+
+			local tBuildType = CpuBuildType()
+			tBuildType.btype = CpuPrerequisites.BT_Building
+			tBuildType.name = "tyranids_biomass_converter"
+			if (self:GetBuildingCountByName(tBuildType.name) < iTargetConverters) then
+				aitrace ("  Not built enough "..tBuildType.name)
+				if (self:TryBuild( tBuildType )) then
+					aitrace("BuildController: Dynamic build of "..tBuildType.name)
+				end
+			else
+			--there are enough converter, so try addons: No risk of keep waiting for ever for biomass resource
+			 --First try addon 1 
+				if iLP1_Number < iLP_Number then
+								
+					-- Start addon
+					tBuildType.name = "tyranids_list_post_addon_1"
+					tBuildType.btype = CpuPrerequisites.BT_AddOn
+					if (self:TryBuild( tBuildType )) then
+						aitrace("BuildController: Squad cap increase needed. Dynamic build of addon "..tBuildType.name)
+					end
+				--If not then try LP2
+				else
+					-- Start addon
+					tBuildType.name = "tyranids_list_post_addon_2"
+					tBuildType.btype = CpuPrerequisites.BT_AddOn
+					if (self:TryBuild( tBuildType )) then
+						aitrace("BuildController: Squad cap increase needed. Dynamic build of addon "..tBuildType.name)
+					end
+				end
+			end
+		end
+	end
+	
+end
+
+
 function TyranidBuildBaseStrategy:GetAddonBuilding( sType )
 
 	if (sType == "tyranids_hq_addon_1") then
@@ -176,6 +263,7 @@ function TyranidBuildBaseStrategy:UpdateTierLevel()
 			-- Check for HQ addon 1
 			elseif (oBase:HasAddOn(iHQAddon1ID)) then
 				self.tierLevel = 2
+				self.info.squad_cap_threshold = 3
 			end
 		end
 	end

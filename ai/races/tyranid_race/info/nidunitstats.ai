@@ -47,7 +47,7 @@ TyranidUnitStats =
 		sbp_name = "genestealer_squad",
 		ebp_name = "genestealer",
 		class = UnitStatsAI.UC_LightInfantryHigh,
-		rating = 3,
+		rating = 8,
 		potential =
 		{
 			{
