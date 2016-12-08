@@ -569,8 +569,7 @@ function CpuManager:GetArmyStrength(oPlayer)
 	-- Calculate army strength
 	local iArmyStrength = 0
 	local vArmyPosition = Vector3f(0, 0, 0)
-	for oUnit in oPlayer:GetSquads() do
-				
+	for oUnit in oPlayer:GetSquads() do		
 		-- Check if unit is valid			
 		if (oUnit:IsValid() and not oUnit:IsEngineer()) then
 		
@@ -582,7 +581,13 @@ function CpuManager:GetArmyStrength(oPlayer)
 			local vUnitPosition = oUnit:GetPosition()
 			vArmyPosition.x = vArmyPosition.x + iUnitStrength * vUnitPosition.x
 			vArmyPosition.z = vArmyPosition.z + iUnitStrength * vUnitPosition.z
+				aitrace ("CPUMnger: Army unit: "..oUnit:GetSquadName().." S: "..iUnitStrength)
+		elseif oUnit:IsEngineer() then
+				aitrace ("CPUMnger: Army unit: "..oUnit:GetSquadName().." is Engineer")
+		else 
+				aitrace ("CPUMnger: Army unit: "..oUnit:GetSquadName().." Not valid")
 		end
+			
 	end
 	if (iArmyStrength > 0) then
 		vArmyPosition.x = vArmyPosition.x / iArmyStrength
